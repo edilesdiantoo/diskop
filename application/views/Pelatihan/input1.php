@@ -149,7 +149,7 @@
         <ul id="progress-bar" class="progressbar">
           <!-- <li class="active">Informasi</li> -->
           <li class="active">Profil</li>
-          <li>Alamat</li>
+          <li>Domisili</li>
           <li>Usaha</li>
           <li>Konfirmasi</li>
         </ul>
@@ -214,6 +214,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript">
 
+    const noKk = '<?= $kk_input ?>'; // Ambil no_kkn yang diteruskan ke halaman
+
+    // Fungsi untuk menghapus session jika no_kkn tidak sama dengan session yang terakhir
+    function checkAndClearSession() {
+      const sessionKk = '<?= $this->session->userdata('no_kk') ?>'; // Ambil session KK terakhir
+      console.log(noKk+'//jjj');
+      console.log(sessionKk);
+      
+
+      if (noKk !== sessionKk) {
+        // Kirim permintaan AJAX ke server untuk menghapus session
+        $.ajax({
+          url: '<?= site_url("PelatihanController/checkKknAndClearSession") ?>', // Ganti dengan URL controller yang sesuai
+          type: 'POST',
+          data: { no_kk: noKk },
+          success: function(response) {
+            console.log(response);
+            
+            console.log('Session data cleared');
+            // Lakukan tindakan lain jika perlu setelah session dihapus
+          },
+          error: function(xhr, status, error) {
+            console.log('Error: ' + error);
+          }
+        });
+      }
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    $(document).ready(function() {
+      checkAndClearSession();
+    });
 
     var progressBar = {
       Bar: $('#progress-bar'),

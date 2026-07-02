@@ -54,7 +54,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 // $route['default_controller'] = 'TransaksiController/landing';
 $route['default_controller'] = 'LoginDiskopController';
-$route['default_controller'] = 'Contruction';
+// $route['default_controller'] = 'Contruction';
 $route['404_override']       = '';
 // $route['404_override'] = 'Contruction';
 // $route['404_override'] = 'PageErrController';
@@ -73,6 +73,7 @@ $route['tahun-pengajuan']        = 'Api/tahun';
 
 //pelatihan
 $route['validasi']               = 'PelatihanController/landing';
+$route['validasi-pelatihan']               = 'PelatihanController/landing';
 $route['input-profil']           = 'PelatihanController/input1';
 $route['input-alamat']           = 'PelatihanController/input2';
 $route['input-usaha']            = 'PelatihanController/input3';

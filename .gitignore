@@ -1,0 +1,34 @@
+    # Log sistem dan Cache bawaan CodeIgniter 3
+application/logs/*
+!application/logs/index.html
+application/cache/*
+!application/cache/index.html
+
+# Konfigurasi Database dan Environment Sensitif
+application/config/database.php
+application/config/development/
+application/config/production/
+
+# Folder upload gambar/dokumen (sesuaikan dengan nama folder di project-mu)
+# Agar gambar yang di-upload user di server tidak terhapus saat git reset
+picture/*
+assets/uploads/*
+
+# File konfigurasi server lokal (Laragon/XAMPP) dan aaPanel
+.user.ini
+.htaccess
+user.ini
+*.log
+
+# File text atau backup temporer
+*.bak
+*.sql
+pesan_log.txt
+
+# Folder IDE / Text Editor
+.vscode/
+.idea/
+.project
+.settings/
+Thumbs.db
+.DS_Store

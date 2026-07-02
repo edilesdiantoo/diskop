@@ -149,7 +149,7 @@
         <ul id="progress-bar" class="progressbar">
           <!-- <li class="active">Informasi</li> -->
           <li class="active">Profil</li>
-          <li class="active">Alamat</li>
+          <li class="active">Domisili</li>
           <li class="active">Usaha</li>
           <li>Konfirmasi</li>
         </ul>
@@ -161,13 +161,13 @@
       <div class="row pt-4">
         <div class="col">
           <div class="mb-3">
-            <input type="text" class="form-control" name="nama_usaha" placeholder="Nama usaha" required>
+            <input type="text" class="form-control" name="nama_usaha" placeholder="Nama usaha" value="<?= isset($nama_usaha) ? htmlspecialchars($nama_usaha) : '' ?>" required>
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" name="nib_sku_iumk" placeholder="No. NIB/SKU/IUMK" required>
+            <input type="text" class="form-control" name="nib_sku_iumk" placeholder="No. NIB/SKU/IUMK" value="<?= isset($nib_sku_iumk) ? htmlspecialchars($nib_sku_iumk) : '' ?>" required>
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" name="alamat_usaha" placeholder="Alamat usaha" required>
+            <input type="text" class="form-control" name="alamat_usaha" placeholder="Alamat usaha" value="<?= isset($alamat_usaha) ? htmlspecialchars($alamat_usaha) : '' ?>" required>
           </div>
           <div class="mb-3">
             <input type="text" class="form-control" name="" value="<?= $getProvJambi->name ?>" placeholder="Provinsi">
@@ -212,19 +212,21 @@
             <div class="mb-3">
               <select class="form-select" id="sektor_usaha" name="sektor_usaha" required>
                 <option value="">-Pilih Sektor Usaha-</option>
-                <?php foreach ($get_sektor_usaha as $key) {
-                  echo '<option value="' . $key->id_sektor_usaha . '">' . $key->nama . '</option>';
-                } ?>
+                  <?php foreach ($get_sektor_usaha as $key) {
+                      // Cek apakah id_sektor_usaha sesuai dengan session yang ada
+                      $selected = ($key->id_sektor_usaha == $this->session->userdata('sektor_usaha')) ? 'selected' : '';
+                      echo '<option value="' . $key->id_sektor_usaha . '" ' . $selected . '>' . $key->nama . '</option>';
+                  } ?>
               </select>
             </div>
             <div class="mb-3" id="input_lainnya" style="display: none;">
-              <input type="text" class="form-control" placeholder="Sektor Usaha Lainnya" name="lainnya" id="sektor_usaha_lainnya" required>
+              <input type="text" class="form-control" placeholder="Sektor Usaha Lainnya" name="lainnya" id="sektor_usaha_lainnya" value="<?= isset($lainnya) ? htmlspecialchars($lainnya) : '' ?>" required>
             </div>
             <div class="mb-3">
-              <input type="text" class="form-control" name="jenis_usaha" placeholder="Jenis usaha" required>
+              <input type="text" class="form-control" name="jenis_usaha" placeholder="Jenis usaha" value="<?= isset($jenis_usaha) ? htmlspecialchars($jenis_usaha) : '' ?>" required>
             </div>
             <div class="mb-3">
-              <input type="text" class="form-control" name="pendapatan_perbulan" placeholder="Pendapatan perbulan" required>
+              <input type="text" class="form-control" name="pendapatan_perbulan" placeholder="Pendapatan perbulan" value="<?= isset($pendapatan_perbulan) ? htmlspecialchars($pendapatan_perbulan) : '' ?>" required>
             </div>
             <div class="mb-3" id="lainnya">
 
@@ -258,17 +260,31 @@
 
     const sektorSelect = document.getElementById('sektor_usaha');
     const inputLainnya = document.getElementById('input_lainnya');
+    const sektorUsahaLainnya = document.getElementById('sektor_usaha_lainnya');
 
-    sektorSelect.addEventListener('change', function() {
-      if (this.value === '9') {
-        inputLainnya.style.display = 'block';
-        document.getElementById('sektor_usaha_lainnya').setAttribute('required', 'required');
+    // Fungsi untuk memeriksa apakah sektor_usaha sudah diatur ke '9' (Lainnya)
+    function checkSektorUsaha() {
+      if (sektorSelect.value === '9') {
+        inputLainnya.style.display = 'block'; // Menampilkan input lainnya
+        sektorUsahaLainnya.setAttribute('required', 'required'); // Menambahkan required
       } else {
-        inputLainnya.style.display = 'none';
-        document.getElementById('sektor_usaha_lainnya').removeAttribute('required');
-        document.getElementById('sektor_usaha_lainnya').value = ''; // reset nilai
+        inputLainnya.style.display = 'none'; // Menyembunyikan input lainnya
+        sektorUsahaLainnya.removeAttribute('required'); // Menghapus required
+        sektorUsahaLainnya.value = ''; // Reset nilai input lainnya
       }
+    }
+
+    // Event listener untuk perubahan nilai sektor_usaha
+    sektorSelect.addEventListener('change', function() {
+      checkSektorUsaha(); // Panggil fungsi untuk cek kondisi setiap kali user memilih
     });
+
+    // Panggil fungsi checkSektorUsaha saat halaman pertama kali dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+      checkSektorUsaha(); // Pastikan kondisi di-check saat halaman dimuat
+    });
+
+
 
     $(document).ready(function() {
       var no_kk = localStorage.getItem('kk');
@@ -287,60 +303,126 @@
       progressBar.Back();
     })
 
-    $('#prov_usaha').ready(function() {
-      const prov = $("#prov_usaha").val();
-      // alert(prov);
-      $.ajax({
-        url: '<?= site_url() ?>TransaksiController/getKabUsaha/' + prov,
-        type: 'POST',
-        success: function(data) {
-          // console.log(data);
-          $('#kab_usaha').html(data);
-        }
-      })
+    $(document).ready(function() {
+      // Jika provinsi sudah dipilih saat halaman dimuat, ambil data kabupaten
+      const prov_usaha = $("#prov_usaha").val();      
+      if (prov_usaha) {
+          getKabupaten(prov_usaha);
+      }
+
+      const kec_usaha = parseInt("<?= @$kab_usaha ?>");
+      if (kec_usaha && !isNaN(kec_usaha)) {
+          getKecamatan(kec_usaha);
+      }
+
+      const kel_usaha = parseInt("<?= @$kec_usaha ?>");
+      if (kel_usaha && !isNaN(kel_usaha)) {
+          getKelurahan(kel_usaha);
+      }
+
+      // Ketika provinsi dipilih, ambil kabupaten
+      $('#prov_usaha').change(function() {
+          const prov = $(this).val();
+          if (prov_usaha) {
+              getKabupaten(prov_usaha);
+          }
+      });
+
+      // Ketika kabupaten dipilih, ambil kecamatan
+      $('#kab_usaha').change(function() {    
+          const kab_usaha = $(this).val();        
+          if (kab_usaha) {
+              getKecamatan(kab_usaha);
+          }
+      });
+
+      // Ketika kecamatan dipilih, ambil kelurahan
+      $('#kec_usaha').change(function() {
+          const kec_usaha = $(this).val();
+          if (kec_usaha) {
+              getKelurahan(kec_usaha);
+          }
+      });    
+
+      // Fungsi untuk mendapatkan kabupaten berdasarkan provinsi
+      function getKabupaten(prov_usaha) {
+        $.ajax({
+            url: '<?= site_url("PelatihanController/getKab/") ?>' + prov_usaha,
+            type: 'POST',
+            dataType: 'json', // Mendapatkan data dalam format JSON
+            success: function(data) {
+                // Kosongkan dropdown kabupaten sebelum mengisinya dengan data baru
+                $('#kab_usaha').html('<option value="">-Kabupaten-</option>'); 
+                
+                // Tambahkan opsi ke dropdown untuk setiap kabupaten
+                $.each(data, function(index, kab_usaha) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kab_usaha.id == "<?= $this->session->userdata('kab_usaha'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kab_usaha').append('<option value="' + kab_usaha.id + '" ' + selected + '>' + kab_usaha.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error); // Menangani error jika ada masalah dalam AJAX
+            }
+        });
+      }
+
+      // Fungsi untuk mendapatkan kecamatan berdasarkan kabupaten
+      function getKecamatan(kab_usaha) {
+        $.ajax({
+          url: '<?= site_url("PelatihanController/getKec/") ?>' + kab_usaha,
+          type: 'POST',
+          dataType: 'json', // Mendapatkan data dalam format JSON
+          success: function(data) {
+              // Kosongkan dropdown sebelum mengisi dengan data baru
+              $('#kec_usaha').html('<option value="">-Kecamatan-</option>'); 
+              
+              // Tambahkan opsi ke dropdown
+              $.each(data, function(index, kec_usaha) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kec_usaha.id == "<?= $this->session->userdata('kec_usaha'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kec_usaha').append('<option value="' + kec_usaha.id + '" ' + selected + '>' + kec_usaha.name + '</option>');
+                });
+          },
+          error: function(xhr, status, error) {
+              console.error("AJAX Error: ", status, error);
+          }
+        });
+      }
+
+      
+      // Fungsi untuk mendapatkan kelurahan berdasarkan kecamatan
+      function getKelurahan(kec_usaha) {
+        $.ajax({
+            url: '<?= site_url("PelatihanController/getKel/") ?>' + kec_usaha,
+            type: 'POST',
+            dataType: 'json', // Mendapatkan data dalam format JSON
+            success: function(data) {              
+                // Kosongkan dropdown sebelum mengisi dengan data baru
+                $('#kel_usaha').html('<option value="">-Kelurahan-</option>'); 
+                
+                // Tambahkan opsi ke dropdown
+                $.each(data, function(index, kel_usaha) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kel_usaha.id == "<?= $this->session->userdata('kel_usaha'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kel_usaha').append('<option value="' + kel_usaha.id + '" ' + selected + '>' + kel_usaha.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error);
+            }
+        });
+      }
     });
-
-    $('#kab_usaha').change(function() {
-      const kab = $("#kab_usaha").val();
-      // alert(kab);
-      $.ajax({
-        url: '<?= site_url() ?>TransaksiController/getKecUsaha/' + kab,
-        type: 'POST',
-        success: function(data) {
-          // console.log(data);
-          $('#kec_usaha').html(data);
-        }
-      })
-    });
-
-    $('#kec_usaha').change(function() {
-      const kec = $("#kec_usaha").val();
-      // alert(kab);
-      $.ajax({
-        url: '<?= site_url() ?>TransaksiController/getKelUsaha/' + kec,
-        type: 'POST',
-        success: function(data) {
-          // console.log(data);
-          $('#kel_usaha').html(data);
-        }
-      })
-    });
-
-    // $('#sektor_usaha').change(function() {
-    //   const sektor_usaha = $("#sektor_usaha").val();
-    //   if (sektor_usaha == 9) {
-    //     $('#lainnya').html('<textarea class="form-control" id="exampleFormControlTextarea1" name="lainnya" required placeholder="Isi sektor usaha lainnya disini..." rows="3"></textarea>');
-    //   }
-
-    //   // $.ajax({
-    //   //   url: '<?= site_url() ?>TransaksiController/getKelUsaha/' + kec,
-    //   //   type: 'POST',
-    //   //   success: function(data) {
-    //   //     // console.log(data);
-    //   //     $('#kel_usaha').html(data);
-    //   //   }
-    //   // })
-    // });
   </script>
 </body>
 

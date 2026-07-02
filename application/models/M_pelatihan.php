@@ -52,21 +52,21 @@ class M_pelatihan extends CI_Model
 
     // Ambil kabupaten berdasarkan provinsi
     public function getKabupatenByProvinsi($prov) {
-        $this->db->where('id', $prov);
+        $this->db->where('province_id', $prov);
         $query = $this->db->get('regencies');
         return $query->result(); // Mengembalikan data kabupaten
     }
 
     // Ambil kecamatan berdasarkan kabupaten
     public function getKecamatanByKabupaten($kab) {
-        $this->db->where('id', $kab);
+        $this->db->where('regency_id', $kab);
         $query = $this->db->get('districts');
         return $query->result(); // Mengembalikan data kecamatan
     }
 
     // Ambil kelurahan berdasarkan kecamatan
     public function getKelurahanByKecamatan($kec) {
-        $this->db->where('id', $kec);
+        $this->db->where('district_id', $kec);
         $query = $this->db->get('villages');
         return $query->result(); // Mengembalikan data kelurahan
     }

@@ -360,12 +360,24 @@
                         type: 'POST',
                         dataType: 'JSON',
                         success: function(data) {
-                            
                             if (data.cekNoKK != null) {
                                 $('#myModal').modal('show');
                             } else {
-                                // Redirect tanpa menampilkan no_kk di URL
-                                window.location.href = "<?= site_url() ?>input-profil";
+                                // Kirim data POST menggunakan form dinamis
+                                var form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = "<?= site_url() ?>input-profil"; // Ganti dengan URL tujuan kamu
+
+                                // Menambahkan data ke dalam form
+                                var inputNoKk = document.createElement('input');
+                                inputNoKk.type = 'hidden';
+                                inputNoKk.name = 'no_kk'; // Nama parameter POST yang diinginkan
+                                inputNoKk.value = no_kk;  // Nilai dari no_kk
+                                form.appendChild(inputNoKk);
+
+                                // Menambahkan form ke body dan submit
+                                document.body.appendChild(form);
+                                form.submit();  // Kirimkan form menggunakan POST
                             }
                         }
                     });

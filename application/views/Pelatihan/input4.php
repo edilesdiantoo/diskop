@@ -168,7 +168,7 @@
         <ul id="progress-bar" class="progressbar">
           <!-- <li class="active">Informasi</li> -->
           <li class="active">Profil</li>
-          <li class="active">Alamat</li>
+          <li class="active">Domisili</li>
           <li class="active">Usaha</li>
           <li class="active">Konfirmasi</li>
         </ul>
@@ -272,7 +272,7 @@
       <div class="row py-4">
         <div class="col">
           <div class="d-flex justify-content-between">
-            <div><a href="<?= site_url() ?>TransaksiController/input" id="Back" class="btn btn-costum-outline-primary">Hal 1</a></div>
+            <div><a href="input-usaha" id="Back" class="btn btn-costum-outline-primary">Sebelumnya</a></div>
             <div><button type="submit" id="Next" class="btn btn-costum-primary">Selesai</button></div>
           </div>
         </div>

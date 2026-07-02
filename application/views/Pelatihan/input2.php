@@ -149,7 +149,7 @@
         <ul id="progress-bar" class="progressbar">
           <!-- <li class="active">Informasi</li> -->
           <li class="active">Profil</li>
-          <li class="active">Alamat</li>
+          <li class="active">Domisili</li>
           <li>Usaha</li>
           <li>Konfirmasi</li>
         </ul>
@@ -197,7 +197,7 @@
         <div class="row py-4">
           <div class="col">
             <div class="d-flex justify-content-between">
-              <div><a href="input-profil" id="Back" class="btn btn-costum-outline-primary">Sebelumnya</a></div>
+              <div><a href="#" id="Back" class="btn btn-costum-outline-primary">Sebelumnya</a></div>
               <div><button id="Next" class="btn btn-costum-primary">Selanjutnya</button></div>
             </div>
           </div>
@@ -226,81 +226,154 @@
     })
 
     $(document).ready(function() {
-  // Jika provinsi sudah dipilih saat halaman dimuat, ambil data kabupaten
-  const prov = $("#prov").val();
-  if (prov) {
-    getKabupaten(prov);
-  }
+      // Jika provinsi sudah dipilih saat halaman dimuat, ambil data kabupaten
+      const prov = $("#prov").val();      
+      if (prov) {
+          getKabupaten(prov);
+      }
 
-  // Ketika provinsi dipilih, ambil kabupaten
-  $('#prov').change(function() {
-    const prov = $(this).val();
-    if (prov) {
-      getKabupaten(prov);
-    }
-  });
+      const kec = parseInt("<?= @$kab ?>");
+      if (kec && !isNaN(kec)) {
+          getKecamatan(kec);
+      }
 
-  // Ketika kabupaten dipilih, ambil kecamatan
-  $('#kab').change(function() {
-    const kab = $(this).val();
-    if (kab) {
-      getKecamatan(kab);
-    }
-  });
+      const kel = parseInt("<?= @$kec ?>");
+      if (kel && !isNaN(kel)) {
+          getKelurahan(kel);
+      }
 
-  // Ketika kecamatan dipilih, ambil kelurahan
-  $('#kec').change(function() {
-    const kec = $(this).val();
-    if (kec) {
-      getKelurahan(kec);
-    }
-  });
+      // Ketika provinsi dipilih, ambil kabupaten
+      $('#prov').change(function() {
+          const prov = $(this).val();
+          if (prov) {
+              getKabupaten(prov);
+          }
+      });
 
-  // Fungsi untuk mendapatkan kabupaten berdasarkan provinsi
-  function getKabupaten(prov) {
-    $.ajax({
-      url: '<?= site_url("TransaksiController/getKab/") ?>' + prov,
-      type: 'POST',
-      success: function(data) {
-        $('#kab').html(data); // Update dropdown kabupaten
-        // Set nilai kabupaten yang sudah terpilih jika ada
-        <?php if(isset($kab)): ?>
-          $('#kab').val("<?= htmlspecialchars($kab) ?>");
-        <?php endif; ?>
+      // Ketika kabupaten dipilih, ambil kecamatan
+      $('#kab').change(function() {    
+          const kab = $(this).val();        
+          if (kab) {
+              getKecamatan(kab);
+          }
+      });
+
+      // Ketika kecamatan dipilih, ambil kelurahan
+      $('#kec').change(function() {
+          const kec = $(this).val();
+          if (kec) {
+              getKelurahan(kec);
+          }
+      });    
+
+      // Fungsi untuk mendapatkan kabupaten berdasarkan provinsi
+      function getKabupaten(prov) {
+        $.ajax({
+            url: '<?= site_url("PelatihanController/getKab/") ?>' + prov,
+            type: 'POST',
+            dataType: 'json', // Mendapatkan data dalam format JSON
+            success: function(data) {
+                // Kosongkan dropdown kabupaten sebelum mengisinya dengan data baru
+                $('#kab').html('<option value="">-Kabupaten-</option>'); 
+                
+                $.each(data, function(index, kab) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kab.id == "<?= $this->session->userdata('kab'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kab').append('<option value="' + kab.id + '" ' + selected + '>' + kab.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error); // Menangani error jika ada masalah dalam AJAX
+            }
+        });
+      }
+
+      // Fungsi untuk mendapatkan kecamatan berdasarkan kabupaten
+      function getKecamatan(kab) {
+        $.ajax({
+          url: '<?= site_url("PelatihanController/getKec/") ?>' + kab,
+          type: 'POST',
+          dataType: 'json', // Mendapatkan data dalam format JSON
+          success: function(data) {
+              // Kosongkan dropdown sebelum mengisi dengan data baru
+              $('#kec').html('<option value="">-Kecamatan-</option>'); 
+              
+              // Tambahkan opsi ke dropdown
+              $.each(data, function(index, kec) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kec.id == "<?= $this->session->userdata('kec'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kec').append('<option value="' + kec.id + '" ' + selected + '>' + kec.name + '</option>');
+                });
+          },
+          error: function(xhr, status, error) {
+              console.error("AJAX Error: ", status, error);
+          }
+        });
+      }
+
+      
+      // Fungsi untuk mendapatkan kelurahan berdasarkan kecamatan
+      function getKelurahan(kec) {
+        $.ajax({
+            url: '<?= site_url("PelatihanController/getKel/") ?>' + kec,
+            type: 'POST',
+            dataType: 'json', // Mendapatkan data dalam format JSON
+            success: function(data) {              
+                // Kosongkan dropdown sebelum mengisi dengan data baru
+                $('#kel').html('<option value="">-Kelurahan-</option>'); 
+                
+                // Tambahkan opsi ke dropdown
+                $.each(data, function(index, kel) {
+                    var selected = '';
+                    // Tentukan apakah kelurahan ini sesuai dengan session yang ada
+                    if (kel.id == "<?= $this->session->userdata('kel'); ?>") {
+                        selected = 'selected="selected"';
+                    }
+                    $('#kel').append('<option value="' + kel.id + '" ' + selected + '>' + kel.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error);
+            }
+        });
       }
     });
-  }
 
-  // Fungsi untuk mendapatkan kecamatan berdasarkan kabupaten
-  function getKecamatan(kab) {
-    $.ajax({
-      url: '<?= site_url("TransaksiController/getKec/") ?>' + kab,
-      type: 'POST',
-      success: function(data) {
-        $('#kec').html(data); // Update dropdown kecamatan
-        // Set nilai kecamatan yang sudah terpilih jika ada
-        <?php if(isset($kec)): ?>
-          $('#kec').val("<?= htmlspecialchars($kec) ?>");
-        <?php endif; ?>
-      }
-    });
-  }
+    document.getElementById('Back').addEventListener('click', function(e) {
+      e.preventDefault(); // Mencegah default action dari link
 
-  // Fungsi untuk mendapatkan kelurahan berdasarkan kecamatan
-  function getKelurahan(kec) {
-    $.ajax({
-      url: '<?= site_url("TransaksiController/getKel/") ?>' + kec,
-      type: 'POST',
-      success: function(data) {
-        $('#kel').html(data); // Update dropdown kelurahan
-        // Set nilai kelurahan yang sudah terpilih jika ada
-        <?php if(isset($kel)): ?>
-          $('#kel').val("<?= htmlspecialchars($kel) ?>");
-        <?php endif; ?>
+      // Data yang ingin dikirim melalui POST
+      var postData = {
+          'no_kk': '<?= $this->session->userdata('kk_input') ?>', // Contoh data yang dikirim, sesuaikan dengan kebutuhan
+          // Tambahkan data lain jika perlu
+      };
+
+      // Membuat form secara dinamis
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = "<?= site_url('input-profil') ?>"; // Ganti dengan URL tujuan
+
+      // Menambahkan data ke dalam form
+      for (var key in postData) {
+          if (postData.hasOwnProperty(key)) {
+              var input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = postData[key];
+              form.appendChild(input);
+          }
       }
-    });
-  }
-});
+
+      // Menambahkan form ke body dan submit
+      document.body.appendChild(form);
+      form.submit();  // Kirimkan form menggunakan POST
+  });
 
   </script>
 </body>

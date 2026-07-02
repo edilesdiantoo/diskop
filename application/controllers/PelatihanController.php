@@ -22,30 +22,93 @@ class PelatihanController extends CI_Controller
 
     public function cekNoKK($nokk)
     {
-        $this->session->set_userdata('nokk', $nokk);
+        // Mengecek apakah 'no_kk' ada di database
+        $cekNoKK = $this->M_pelatihan->cekNoKK($nokk)->row();
+
+        // Jika 'no_kk' ditemukan, simpan dalam session
+        if ($cekNoKK) {
+            $this->session->set_userdata('no_kk', $nokk); // Menyimpan 'no_kk' ke session
+        }
+
+        // Kirimkan response dalam format JSON
         $data = array(
-            'cekNoKK' => $this->M_pelatihan->cekNoKK($nokk)->row(),
+            'cekNoKK' => $cekNoKK,
         );
+        
         echo json_encode($data);
+    }
+
+
+    public function checkKknAndClearSession() {
+        $no_kk = $this->input->post('no_kk');
+
+        // Get the current session data for 'kk'
+        $sessionKk = $this->session->userdata('kk');
+
+        // If no_kk from the form does not match session 'kk'
+        if ($no_kk !== $sessionKk) {
+            // Log the session mismatch for debugging or audit purposes (optional)
+            log_message('info', 'Mismatch detected for no_kk. Clearing session data.');
+
+            // Clear all relevant session data
+            $this->session->unset_userdata([
+                // 'kk', 
+                // 'nama_lengkap', 
+                // 'nik', 
+                // 'jk', 
+                // 'tempat_lahir', 
+                // 'tgl_lahir', 
+                // 'hp', 
+                // 'pdd_terakhir', 
+                // 'nama_ibu', 
+                // 'lainnya', 
+                // 'alamat', 
+                // 'prov', 
+                // 'kab', 
+                // 'kec', 
+                // 'kel', 
+                // 'nib_sku_iumk', 
+                // 'nama_usaha', 
+                // 'alamat_usaha', 
+                // 'prov_usaha', 
+                // 'kab_usaha', 
+                // 'kec_usaha', 
+                // 'kel_usaha', 
+                // 'sektor_usaha', 
+                // 'jenis_usaha', 
+                // 'pendapatan_perbulan'
+            ]);
+
+            // Alternatively, destroy the entire session if you want to clear all session data
+            // $this->session->sess_destroy(); 
+        }
+
+        // Optional return if you need to send no_kk to the view
+        // return $no_kk;
     }
 
     public function input1()
     {
         $session_data = $this->session->userdata();
-        $no_kk        = $this->session->userdata('nokk');
+        $no_kk = $this->input->post('no_kk');
+        
+        // Melakukan sanitasi data session
         $nama_lengkap = htmlspecialchars(trim($session_data['nama_lengkap'] ?? ''), ENT_QUOTES);
         $nik          = htmlspecialchars(trim($session_data['nik'] ?? ''), ENT_QUOTES);
-        $kk           = htmlspecialchars(trim($session_data['nokk'] ?? ''), ENT_QUOTES);
+        $kk           = htmlspecialchars(trim($session_data['no_kk'] ?? ''), ENT_QUOTES);
         $jk           = htmlspecialchars(trim($session_data['jk'] ?? ''), ENT_QUOTES);
         $tempat_lahir = htmlspecialchars(trim($session_data['tempat_lahir'] ?? ''), ENT_QUOTES);
         $tgl_lahir    = htmlspecialchars(trim($session_data['tgl_lahir'] ?? ''), ENT_QUOTES);
         $hp           = htmlspecialchars(trim($session_data['hp'] ?? ''), ENT_QUOTES);
         $pdd_terakhir = htmlspecialchars(trim($session_data['pdd_terakhir'] ?? ''), ENT_QUOTES);
         $nama_ibu     = htmlspecialchars(trim($session_data['nama_ibu'] ?? ''), ENT_QUOTES);
-        $data         = array(
+        
+        // Menyimpan data ke dalam array
+        $data = array(
             'nama_lengkap'     => $nama_lengkap,
             'nik'              => $nik,
             'kk'               => $kk,
+            'kk_input'         => $no_kk,
             'jk'               => $jk,
             'tempat_lahir'     => $tempat_lahir,
             'tgl_lahir'        => $tgl_lahir,
@@ -54,14 +117,21 @@ class PelatihanController extends CI_Controller
             'nama_ibu'         => $nama_ibu,
             'get_sektor_usaha' => $this->M_transaksi->get_sektor_usaha()->result(),
         );
-        if ($no_kk) {
 
-            // print_r($data);
+        // Menyimpan data ke session
+        $this->session->set_userdata($data);
+
+        // Jika no_kk ada, tampilkan data, jika tidak, arahkan ke halaman Contruction
+        if ($no_kk) {
+            // Hapus print_r() atau ganti dengan logging untuk debugging
+            // log_message('info', 'Data session yang diset: ' . print_r($data, true));
             $this->load->view('Pelatihan/input1.php', $data);
         } else {
+            // Pastikan nama view benar dan sesuai
             $this->load->view('Contruction');
         }
     }
+
 
     public function input2()
     {
@@ -77,7 +147,6 @@ class PelatihanController extends CI_Controller
             'nama_ibu'     => $this->input->post('nama_ibu'),
             'lainnya'      => $this->input->post('lainnya'),
             'getProvJambi' => $this->M_transaksi->getProvJambi()->row(),
-
         );
         
         // Simpan data dalam session
@@ -109,8 +178,8 @@ class PelatihanController extends CI_Controller
         // Dapatkan data yang tersimpan di session untuk ditampilkan di halaman berikutnya
         $session_data3 = $this->session->userdata();
 
-        // print_r($session_data3);
-        $this->load->view('Pelatihan/input3.php', $session_data3);
+        print_r($session_data3);
+        // $this->load->view('Pelatihan/input3.php', $session_data3);
     }
 
     public function input4()
@@ -138,8 +207,8 @@ class PelatihanController extends CI_Controller
         // Dapatkan data yang tersimpan di session untuk ditampilkan di halaman berikutnya
         $session_data4 = $this->session->userdata();
 
-        // print_r($session_data4);
-        $this->load->view('Pelatihan/input4', $session_data4);
+        print_r($session_data4);
+        // $this->load->view('Pelatihan/input4', $session_data4);
     }
 
     public function simpanInputPelatihan()
@@ -224,28 +293,69 @@ class PelatihanController extends CI_Controller
 
     public function getKab($prov) {
         $kabupaten = $this->M_pelatihan->getKabupatenByProvinsi($prov);
-        $options = '<option value="">-Kabupaten-</option>';
+        
+        // Buat array kosong untuk menampung data
+        $kabupaten_data = [];
+        
+        // Cek apakah ada data kabupaten
         foreach ($kabupaten as $kab) {
-        $options .= '<option value="' . $kab->id . '">' . $kab->name . '</option>';
+            $kabupaten_data[] = [
+                'id' => $kab->id,
+                'name' => $kab->name,
+                'selected' => ($kab->id == $this->session->userdata('kab')) ? 'selected="selected"' : ''
+            ];
         }
-        echo $options;
+        
+        // Kirimkan data dalam format JSON
+        echo json_encode($kabupaten_data);
     }
+
 
     public function getKec($kab) {
+        // Ambil kecamatan berdasarkan kabupaten
         $kecamatan = $this->M_pelatihan->getKecamatanByKabupaten($kab);
-        $options = '<option value="">-Kecamatan-</option>';
+        
+        // Buat array kosong untuk menampung data
+        $kecamatan_data = [];
+        
+        // Cek apakah ada data kecamatan
         foreach ($kecamatan as $kec) {
-        $options .= '<option value="' . $kec->id . '">' . $kec->name . '</option>';
+            // Tentukan apakah kecamatan ini sesuai dengan session yang ada
+            $selected = '';
+            if ($kec->id == $this->session->userdata('kec')) {
+                $selected = 'selected="selected"';
+            }
+            
+            // Masukkan data kecamatan ke array
+            $kecamatan_data[] = [
+                'id' => $kec->id,
+                'name' => $kec->name,
+                'selected' => $selected
+            ];
         }
-        echo $options;
+        
+        // Kirimkan data dalam format JSON
+        echo json_encode($kecamatan_data);
     }
 
+
     public function getKel($kec) {
+        // Ambil kelurahan berdasarkan kecamatan
         $kelurahan = $this->M_pelatihan->getKelurahanByKecamatan($kec);
-        $options = '<option value="">-Kelurahan-</option>';
+        
+        // Buat array kosong untuk menampung data
+        $kelurahan_data = [];
+        
+        // Cek apakah ada data kelurahan
         foreach ($kelurahan as $kel) {
-        $options .= '<option value="' . $kel->id . '">' . $kel->name . '</option>';
+            // Tambahkan ID dan nama kelurahan ke array
+            $kelurahan_data[] = [
+                'id' => $kel->id,
+                'name' => $kel->name
+            ];
         }
-        echo $options;
+        
+        // Kirimkan data dalam format JSON
+        echo json_encode($kelurahan_data);
     }
 }
