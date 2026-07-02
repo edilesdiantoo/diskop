@@ -232,7 +232,7 @@
         </div>
         <div class="row pt-5">
             <div class="col">
-                <div class="fs-4 fw-bold text-white text-center">PEMERINTAH PROVINSI JAMBI PROGRAM GUBERNUR JAMBI DUMISAKE TAHUN 2024</div>
+                <div class="fs-4 fw-bold text-white text-center">PEMERINTAH PROVINSI JAMBI PROGRAM GUBERNUR JAMBI PROV TAHUN 2026</div>
             </div>
         </div>
         <div class="container-fluid">
