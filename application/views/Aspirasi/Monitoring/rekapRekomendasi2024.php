@@ -33,6 +33,7 @@
                                             <option value="2023">2023</option>
                                             <option value="2024">2024</option>
                                             <option value="2025">2025</option>
+                                            <option value="2026">2026</option>
                                         </select>
                                     </div>
                                     <div style="flex: 1;" class ="mr-2">
@@ -40,10 +41,10 @@
                                             <option value="">-Pilih Kab-</option>
                                             <?php
                                             $getKab = $this->M_master->getKab(15)->result();
-                                            foreach ($getKab as $value) {
-                                                echo '<option value="' . $value->id . '">' . $value->name . '</option>';
-                                            }
-                                            ?>
+                            foreach ($getKab as $value) {
+                                echo '<option value="'.$value->id.'">'.$value->name.'</option>';
+                            }
+                            ?>
                                         </select>
                                     </div>
                                     <button type="submit" id="print" class="btn btn-outline-warning mr-1">Print</button>

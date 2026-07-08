@@ -43,12 +43,12 @@
                                 <select class="form-select" id="get_kategori" name="id_kategori_dumisake" onchange="kategoriUsaha()">
                                     <option value="" style="">-Pilih Kategori-</option>
                                     <?php
-                                    $kategories_dumisake  = $this->M_transaksi->kategories_dumisake()->result();
+                                    $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
                                     foreach ($kategories_dumisake as $key => $value) {
-                                        if ($cekDataVerifikasiPelakuUsaha->id_kategori_dumisake  == $value->id_kategori_dumisake) {
-                                            echo '<option value="' . $value->id_kategori_dumisake . '" selected>' . $value->nama . '</option>';
+                                        if ($cekDataVerifikasiPelakuUsaha->id_kategori_dumisake == $value->id_kategori_dumisake) {
+                                            echo '<option value="'.$value->id_kategori_dumisake.'" selected>'.$value->nama.'</option>';
                                         } else {
-                                            echo '<option value="' . $value->id_kategori_dumisake . '">' . $value->nama . '</option>';
+                                            echo '<option value="'.$value->id_kategori_dumisake.'">'.$value->nama.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -133,9 +133,9 @@
 
                                     foreach ($getProv as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->id_prov == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -149,9 +149,9 @@
 
                                     <?php foreach ($getKab as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->id_kab == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -164,9 +164,9 @@
                                     <option value="">-Pilih-</option>
                                     <?php foreach ($getKec as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->id_kec == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -179,9 +179,9 @@
                                     <option value="">-Pilih-</option>
                                     <?php foreach ($getKel as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->id_kel == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -349,9 +349,9 @@
 
                                     foreach ($getProvUsaha as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->prov_usaha == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -364,9 +364,9 @@
                                     <option value="">-Pilih-</option>
                                     <?php foreach ($getKabUsaha as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->kab_usaha == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -379,9 +379,9 @@
                                     <option value="">-Pilih-</option>
                                     <?php foreach ($getKecUsaha as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->kec_usaha == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -394,9 +394,9 @@
                                     <option value="">-Pilih-</option>
                                     <?php foreach ($getKelUsaha as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->kel_usaha == $key->id) {
-                                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."' selected>".$key->name.'</option>';
                                         } else {
-                                            echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                                            echo "<option value='".$key->id."'>".$key->name.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -459,7 +459,7 @@
                                     <option value="">-Pilih Sektor Usaha-</option>
                                     <?php foreach ($get_sektor_usaha as $key) {
                                         if ($cekDataVerifikasiPelakuUsaha->sektor_usaha == $key->id_sektor_usaha) {
-                                            echo '<option value="' . $key->id_sektor_usaha . '" selected>' . $key->nama . '</option>';
+                                            echo '<option value="'.$key->id_sektor_usaha.'" selected>'.$key->nama.'</option>';
                                         }
                                     } ?>
                                 </select>
@@ -496,11 +496,11 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="exampleInputEmail3">Foto Usaha</label> <br>
-                                <!-- <a href="<?php echo base_url(); ?>uploads/KTP/<?php echo  $cekDataVerifikasiPelakuUsaha->file_ktp; ?>" target="_new" type="button" class="btn btn-info">View FC KTP</a> -->
+                                <!-- <a href="<?php echo base_url(); ?>uploads/KTP/<?php echo $cekDataVerifikasiPelakuUsaha->file_ktp; ?>" target="_new" type="button" class="btn btn-info">View FC KTP</a> -->
                                 <div class="input-group">
                                     <input type="hidden" name="foto_usaha_old" value="<?= $cekDataVerifikasiPelakuUsaha->foto_usaha ?>">
                                     <input type="file" class="form-control inputdua" name="foto_usaha" id="foto_usaha" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                                    <a type="button" href="<?php echo base_url(); ?>uploads/fotoUsaha/<?php echo  $cekDataVerifikasiPelakuUsaha->foto_usaha; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
+                                    <a type="button" href="<?php echo base_url(); ?>uploads/fotoUsaha/<?php echo $cekDataVerifikasiPelakuUsaha->foto_usaha; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
 
                                 </div>
                                 <small id="error">
@@ -514,7 +514,7 @@
                                 <div class="input-group">
                                     <input type="hidden" name="file_sertifikat_umkm_old" value="<?= $cekDataVerifikasiPelakuUsaha->file_sertifikat_umkm ?>">
                                     <input type="file" name="file_sertifikat_umkm" class="form-control inputdua" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                                    <a type="button" href=" <?php echo base_url(); ?>uploads/sertifikatUMKM/<?php echo  $cekDataVerifikasiPelakuUsaha->file_sertifikat_umkm; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
+                                    <a type="button" href=" <?php echo base_url(); ?>uploads/sertifikatUMKM/<?php echo $cekDataVerifikasiPelakuUsaha->file_sertifikat_umkm; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
                                     <small><span style="color:red;">*</span>Jumalah Nama File Max 50 Karakter dan size 200kb max</small>
                                 </div>
                             </div>
@@ -525,7 +525,7 @@
                                 <div class="input-group">
                                     <input type="hidden" name="file_kk_old" value="<?= $cekDataVerifikasiPelakuUsaha->file_kk ?>">
                                     <input type="file" class="form-control inputdua" name="file_kk" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                                    <a type="button" href=" <?php echo base_url(); ?>uploads/KK/<?php echo  $cekDataVerifikasiPelakuUsaha->file_kk; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
+                                    <a type="button" href=" <?php echo base_url(); ?>uploads/KK/<?php echo $cekDataVerifikasiPelakuUsaha->file_kk; ?>" target="_new" class="btn btn-outline-secondary" style="background-color: #27374b; border: 0; padding: 2px 20px; color: white; border-bottom-right-radius: 1.5rem; border-top-right-radius: 1.5rem;" type="button" id="inputGroupFileAddon04">view Image</a>
                                     <small><span style="color:red;">*</span>Jumalah Nama File Max 50 Karakter dan size 200kb max</small>
                                 </div>
                             </div>
@@ -561,20 +561,20 @@
                             <label class="form-label">Bersedia bertanggung jawab penuh atas dana bantuan</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="bersedia_bertanggung_jawab_1" <?php if ($cekDataVerifikasiPelakuUsaha->bersedia_bertanggung_jawab_1 == '1') {
-                                                                                                                        echo "checked";
-                                                                                                                    } else {
-                                                                                                                        echo "";
-                                                                                                                    } ?> value="1" id="flexRadioDefault1">
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?> value="1" id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Ya
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="bersedia_bertanggung_jawab_1" value="0" <?php if ($cekDataVerifikasiPelakuUsaha->bersedia_bertanggung_jawab_1 == '0') {
-                                                                                                                                echo "checked";
-                                                                                                                            } else {
-                                                                                                                                echo "";
-                                                                                                                            } ?> id="flexRadioDefault1">
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?> id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Tidak
                                 </label>
@@ -584,20 +584,20 @@
                             <label class="form-label">Bersedia bertanggung jawab membuat laporan pemanfaatan dana bantuan</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="bersedia_bertanggung_jawab_2" value="1" <?php if ($cekDataVerifikasiPelakuUsaha->bersedia_bertanggung_jawab_1 == '1') {
-                                                                                                                                echo "checked";
-                                                                                                                            } else {
-                                                                                                                                echo "";
-                                                                                                                            } ?> id="flexRadioDefault1">
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?> id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Ya
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="bersedia_bertanggung_jawab_2" value="0" <?php if ($cekDataVerifikasiPelakuUsaha->bersedia_bertanggung_jawab_2 == '0') {
-                                                                                                                                echo "checked";
-                                                                                                                            } else {
-                                                                                                                                echo "";
-                                                                                                                            } ?> id="flexRadioDefault1">
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?> id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Tidak
                                 </label>
@@ -607,20 +607,20 @@
                             <label class="form-label">Tidak memberikan uang ucapan terima kasih, uang jasa dan uang komisi kepada pihak lain</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tidak_komisi_jasa" value="1" id="flexRadioDefault1" <?php if ($cekDataVerifikasiPelakuUsaha->tidak_komisi_jasa == '1') {
-                                                                                                                                            echo "checked";
-                                                                                                                                        } else {
-                                                                                                                                            echo "";
-                                                                                                                                        } ?>>
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?>>
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Ya
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tidak_komisi_jasa" value="0" id="flexRadioDefault1" <?php if ($cekDataVerifikasiPelakuUsaha->tidak_komisi_jasa == '0') {
-                                                                                                                                            echo "checked";
-                                                                                                                                        } else {
-                                                                                                                                            echo "";
-                                                                                                                                        } ?>>
+                                    echo 'checked';
+                                } else {
+                                    echo '';
+                                } ?>>
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Tidak
                                 </label>
@@ -666,7 +666,7 @@
                                     <?php if ($cekDataVerifikasiPelakuUsaha->kategori_pelaku_usaha == '1') { ?>
                                         <option value="1" selected>YA</option>
                                         <option value="0">TIDAK</option>
-                                    <?php  } else { ?>
+                                    <?php } else { ?>
                                         <option value="1">YA</option>
                                         <option value="0" selected>TIDAK</option>
                                     <?php } ?>
@@ -699,11 +699,11 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 col-6">
-                                <button type="submit" id="1" name="approve" value="1" type="button" class="btn btn-success mb-2 aksi-status"><i class="fa fa-plus-square"></i> <span>Setujui</span></button>
+                                <button type="submit" id="1" name="approve" value="1" type="button" class="btn btn-success mb-2 aksi-status"><i class="fa fa-plus-square"></i> <span>Simpan Perubahan</span></button>
                             </div>
-                            <div class="col-md-6 col-6 text-right">
+                            <!-- <div class="col-md-6 col-6 text-right">
                                 <button data-aksi="0" name="disapprove" value="0" type="button" class="btn btn-danger mb-2" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-plus-square"></i> <span>Tolak</span></button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

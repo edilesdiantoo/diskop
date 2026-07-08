@@ -15,14 +15,14 @@
                             Semua data aspirasi
                         </p>
                     </div>
-                    <?php 
-                    $level_user = $this->session->userdata('level_user'); 
-                    $kab = $this->session->userdata('kab'); 
-                    if ($level_user != 1) {
-                        echo '<input type="hidden" id="kab_usaha" name="kab_usaha" value="'.$kab.'">';
-                    }
-                    
-                    ?>
+                    <?php
+                    $level_user = $this->session->userdata('level_user');
+        $kab = $this->session->userdata('kab');
+        if ($level_user != 1) {
+            echo '<input type="hidden" id="kab_usaha" name="kab_usaha" value="'.$kab.'">';
+        }
+
+        ?>
                     <!-- Tahun Penerima (Selalu Tampil) -->
                     <div class="col-12">
                         <div class="input-group mb-3">
@@ -36,7 +36,7 @@
                         </div>
                     </div>
 
-                    <?php if ($level_user == 1): ?>
+                    <?php if ($level_user == 1) { ?>
                         <!-- Penerima Tahun Lalu -->
                         <div class="col-3">
                             <div class="input-group mb-3">
@@ -53,28 +53,28 @@
                                 <select class="form-control level_satu" id="kab_usaha">
                                     <option value="">-Pilih Kab-</option>
                                     <?php
-                                    $getKab = $this->M_master->getKab(15)->result();
-                                    foreach ($getKab as $value) {
-                                        echo '<option value="' . $value->id . '">' . $value->name . '</option>';
-                                    }
-                                    ?>
+                        $getKab = $this->M_master->getKab(15)->result();
+                        foreach ($getKab as $value) {
+                            echo '<option value="'.$value->id.'">'.$value->name.'</option>';
+                        }
+                        ?>
                                 </select>
                             </div>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
 
-                    <?php if ($level_user == 1 || $level_user == 3): ?>
+                    <?php if ($level_user == 1 || $level_user == 3) { ?>
                         <!-- Pilih Kategori -->
                         <div class="col-3">
                             <div class="input-group mb-3">
                                 <select class="form-control level_satu" id="get_kategori">
                                     <option value="">-Pilih Kategori-</option>
                                     <?php
-                                    $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
-                                    foreach ($kategories_dumisake as $value) {
-                                        echo '<option value="' . $value->id_kategori_dumisake . '">' . $value->nama . '</option>';
-                                    }
-                                    ?>
+                        $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
+                        foreach ($kategories_dumisake as $value) {
+                            echo '<option value="'.$value->id_kategori_dumisake.'">'.$value->nama.'</option>';
+                        }
+                        ?>
                                 </select>
                             </div>
                         </div>
@@ -85,14 +85,14 @@
                                 <input type="text" id="search" class="form-control search" placeholder="Cari Nama..." aria-label="search" aria-describedby="basic-addon1">
                             </div>
                         </div>
-                    <?php else: ?>
+                    <?php } else { ?>
                         <!-- Input Search untuk level lain -->
                         <div class="col-3">
                             <div class="input-group mb-3">
                                 <input type="text" id="search" class="form-control search" placeholder="Cari Nama..." aria-label="search" aria-describedby="basic-addon1">
                             </div>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
                 </div>
                 <div class="row">
                     <div class="col-12" id="pelakuUsahaSearch">
@@ -114,14 +114,14 @@
                                         <!-- <th>Sektor Usaha</th> -->
                                         <th>Jenis Usaha</th>
                                         <th>Titik Koordinat</th>
-                                        <th>Status</th>
+                                        <!-- <th>Status</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="">
                                     <?php $no = 1;
 
-                                    foreach ($getDataVerifikasiPelakuUsaha as $key) { ?>
+        foreach ($getDataVerifikasiPelakuUsaha as $key) { ?>
                                         <tr>
                                             <td><?= ++$start; ?></td>
                                             <td><?= $key->no_urut ?></td>
@@ -133,52 +133,34 @@
                                             <td><?= $key->jenis_usaha ?></td>
                                             <td>
                                                 <?php if ($key->titik_koordinat) {
-                                                    echo '<a href="https://maps.google.com/?q=' . $key->titik_koordinat . '">Lokasi Map</a>';
+                                                    echo '<a href="https://maps.google.com/?q='.$key->titik_koordinat.'">Lokasi Map</a>';
                                                 } else {
-                                                    echo "Tidak Ada";
+                                                    echo 'Tidak Ada';
                                                 }
-                                                ?>
+            ?>
                                             </td>
-                                            <td>
-                                                <?php
-                                                if ($key->aksi == null) {
-                                                    echo "Belum di Verifikasi <br>";
-                                                } else if ($key->aksi == 0) {
-                                                    echo "Tidak Memenuhi Syarat <br>";
-                                                } else if ($key->aksi == 1 && $key->aksi_akhir == 0) {
-                                                    echo "Layak<br>";
-                                                } else if ($key->aksi_akhir == 1) {
-                                                    echo "Calon Penerima <br>";
-                                                }
-                                                if ($level_user == 1 || $level_user == 3) {
-                                                    if ($key->kk2) {
-                                                        echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                                    }
-                                                }
-
-                                                ?>
-                                            </td>
+                                            
 
                                             <td style="text-align: center;">
 
                                                 <?php
-                                                if ($key->aksi == 1 && $level_user == 1 || $level_user == 3) { ?>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhir/' . $key->id_pelaku_usaha) ?>" type="button" class="btn btn-outline-warning btn-xs">Detail</a><br>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/' . $key->id_pelaku_usaha . '/' . '1') ?>" type="button" class="btn btn-outline-success mt-1 btn-xs">Setuju</a><br>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/' . $key->id_pelaku_usaha . '/' . '0') ?>" type="button" class="btn btn-outline-danger mt-1 btn-xs">Tolak</a>
+            if ($key->aksi == 1 && $level_user == 1 || $level_user == 3) { ?>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhir/'.$key->id_pelaku_usaha) ?>" type="button" class="btn btn-outline-warning btn-xs">Detail</a><br>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'1') ?>" type="button" class="btn btn-outline-success mt-1 btn-xs">Setuju</a><br>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'0') ?>" type="button" class="btn btn-outline-danger mt-1 btn-xs">Tolak</a>
                                                     <?php } else {
-                                                    if ($key->kk2) {
-                                                        echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                                    } else { ?>
+                                                        if ($key->kk2) {
+                                                            echo "<p style='color: red;'>Pernah Menerima Bantuan";
+                                                        } else { ?>
 
                                                         <!-- <a type="button">Maintenence</a> -->
                                                         <?php
-                                                        $uri = $this->uri->segment('1');
-                                                        $uri2 = $this->uri->segment('2');
-                                                        ?>
-                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/' . $key->id_pelaku_usaha . '/' . $uri . '/' . $uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Prosses Verifikasi</a>
+                                                            $uri = $this->uri->segment('1');
+                                                            $uri2 = $this->uri->segment('2');
+                                                            ?>
+                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Prosses Verifikasi</a>
                                                 <?php }
-                                                } ?>
+                                                        } ?>
                                             </td>
                                         </tr>
                                     <?php } ?>
