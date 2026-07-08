@@ -32,3 +32,8 @@ pesan_log.txt
 .settings/
 Thumbs.db
 .DS_Store
+
+
+# Mengabaikan folder vendor
+vendor/
+vendors/
