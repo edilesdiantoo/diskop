@@ -1,10 +1,13 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class AspirasiModel extends CI_Model
 {
     public function countPelakuUsaha()
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha WHERE aksi = '1' and kategori_pelaku_usaha = 1 and aksi_akhir is null ");
+
         return $query;
     }
 
@@ -25,26 +28,28 @@ class AspirasiModel extends CI_Model
         LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
         WHERE a.aksi = '1' and a.kategori_pelaku_usaha = 1 and a.aksi_akhir is null limit $start,$limit
             ");
+
         return $query->result();
     }
-
 
     public function countPelakuUsahaAdmin($kab)
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha where kab_usaha = '$kab' and kategori_pelaku_usaha = 1");
+
         return $query;
     }
 
     public function countPelakuUsahaAdmin2024($kab)
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha where kab_usaha = '$kab' AND  aksi = 1 and aksi_akhir is null and (year(tgl_input) = 2024 OR year(tgl_edit) = 2024) and kategori_pelaku_usaha = 1");
+
         return $query;
     }
-
 
     public function countPelakuUsaha2024()
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha WHERE aksi = '1' and aksi_akhir is null and year(tgl_input) = '2024' AND kategori_pelaku_usaha = 1");
+
         return $query;
     }
 
@@ -60,8 +65,9 @@ class AspirasiModel extends CI_Model
             FROM pelaku_usaha as a
             LEFT OUTER JOIN kategori_dumisake AS b ON a.id_kategori_dumisake = b.id_kategori_dumisake
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
-            WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha = 1 and  a.aksi = 1 and a.aksi_akhir is null limit $start,$limit
+            WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha = 1 AND (a.aksi = 1 OR a.aksi IS NULL) and a.aksi_akhir is null limit $start,$limit
             ");
+
         return $query->result();
     }
 
@@ -78,6 +84,7 @@ class AspirasiModel extends CI_Model
             LEFT OUTER JOIN kategori_dumisake AS b ON a.id_kategori_dumisake = b.id_kategori_dumisake
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.kab_usaha = '$kab' and  a.aksi = 1 and a.aksi_akhir is null and (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) limit $start,$limit");
+
         return $query->result();
     }
 
@@ -98,6 +105,7 @@ class AspirasiModel extends CI_Model
         LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
         WHERE a.kategori_pelaku_usaha = 1 and a.aksi_akhir is null and (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) limit $start,$limit
             ");
+
         return $query->result();
     }
 
@@ -119,6 +127,7 @@ class AspirasiModel extends CI_Model
                 WHERE a.kab_usaha = '$kab' AND a.kategori_pelaku_usaha = 1  AND
                 (CAST(a.aksi AS UNSIGNED) is null or  CAST(a.aksi AS UNSIGNED) = '') and (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) limit $start, $limit
             ");
+
         return $query->result();
     }
 
@@ -140,6 +149,7 @@ class AspirasiModel extends CI_Model
         WHERE a.kab_usaha = '$kab'  AND a.kategori_pelaku_usaha = 1 and
         (CAST(a.aksi AS UNSIGNED) is not null or  CAST(a.aksi AS UNSIGNED) = '1') limit $start, $limit
             ");
+
         return $query->result();
     }
 
@@ -147,8 +157,8 @@ class AspirasiModel extends CI_Model
     {
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $where_aksi = "AND a.aksi = 1";
-        } else if ($level == 3) {
+            $where_aksi = 'AND a.aksi = 1';
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' AND a.aksi = 1";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab'";
@@ -157,19 +167,19 @@ class AspirasiModel extends CI_Model
         if ($nama) {
             $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%'";
         } else {
-            $like_val = "";
+            $like_val = '';
         }
 
         if ($get_kategori) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         } else {
-            $kategori_ada = "";
+            $kategori_ada = '';
         }
-
 
         $query = $this->db->query("SELECT a.*
         FROM pelaku_usaha as a 
         where a.kk not in (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) and a.kategori_pelaku_usaha = 1 $where_aksi $kategori_ada $like_val limit 100");
+
         return $query;
     }
 
@@ -178,7 +188,7 @@ class AspirasiModel extends CI_Model
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
             $where_aksi = "AND a.kab_usaha = '$kab_usaha'";
-        } else if ($level == 3) {
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' ";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab'";
@@ -190,19 +200,17 @@ class AspirasiModel extends CI_Model
             $penerimaWhere = '';
         }
 
-
         if ($nama) {
             $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%'";
         } else {
-            $like_val = "";
+            $like_val = '';
         }
 
         if ($get_kategori) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         } else {
-            $kategori_ada = "";
+            $kategori_ada = '';
         }
-
 
         $query = $this->db->query(
             "SELECT a.*,
@@ -213,6 +221,7 @@ class AspirasiModel extends CI_Model
                 $kategori_ada $penerimaWhere
             "
         );
+
         return $query;
     }
 
@@ -223,7 +232,7 @@ class AspirasiModel extends CI_Model
         // Set the query condition based on user level
         if ($level == 1) {
             $where_aksi = "AND a.kab_usaha = '$kab_usaha'";
-        } else if ($level == 3) {
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab'";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab'";
@@ -240,14 +249,14 @@ class AspirasiModel extends CI_Model
         if ($nama) {
             $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) LIKE '%$nama%'";
         } else {
-            $like_val = "";
+            $like_val = '';
         }
 
         // Handling the category filter if provided
         if ($get_kategori) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         } else {
-            $kategori_ada = "";
+            $kategori_ada = '';
         }
 
         // Query with dynamic year filtering based on the selected year
@@ -260,10 +269,10 @@ class AspirasiModel extends CI_Model
                 $where_aksi 
                 AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?) 
                 AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
-                AND (a.aksi = '' OR a.aksi IS NULL)
+                AND (a.aksi = '1' OR a.aksi IS NULL)
                 $kategori_ada 
                 $penerimaWhere
-                ", array($tahun, $tahun) // Binding the year parameter for both tgl_input and tgl_edit
+                ", [$tahun, $tahun] // Binding the year parameter for both tgl_input and tgl_edit
         );
 
         return $query;
@@ -272,19 +281,19 @@ class AspirasiModel extends CI_Model
     public function getDataPelakUsaha($kab, $nama, $tahun)
     {
         $level = $this->session->userdata('level_user');
-        
+
         // Set the query condition based on user level
         if ($level == 1) {
             $where_aksi = "AND a.kab_usaha = '$kab' ";
-        } else if ($level == 3) {
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' ";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab' ";
         }
 
         // Initialize $like_val and $nama_clean as empty to handle edge cases
-        $like_val = "";
-        $nama_clean = "";
+        $like_val = '';
+        $nama_clean = '';
 
         // Sanitize the nama input to avoid unwanted spaces if provided
         if ($nama) {
@@ -305,25 +314,25 @@ class AspirasiModel extends CI_Model
             AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
             AND (a.aksi = '' OR a.aksi IS NULL)
             $like_val 
-            ", array($tahun, $tahun)  // Bind the year parameter for both tgl_input and tgl_edit
+            ", [$tahun, $tahun]  // Bind the year parameter for both tgl_input and tgl_edit
         );
 
         return $query;
     }
 
-
-
-    //======================2025====================//
+    // ======================2025====================//
 
     public function countPelakuUsaha2025()
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha WHERE aksi = '1' and aksi_akhir is null and year(tgl_input) = '2025' AND kategori_pelaku_usaha = 1");
+
         return $query;
     }
 
     public function countPelakuUsahaAdmin2025($kab)
     {
         $query = $this->db->query("SELECT * FROM pelaku_usaha where kab_usaha = '$kab' AND  aksi = 1 and aksi_akhir is null and (year(tgl_input) = 2025 OR year(tgl_edit) = 2025) and kategori_pelaku_usaha = 1");
+
         return $query;
     }
 
@@ -344,6 +353,7 @@ class AspirasiModel extends CI_Model
         LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
         WHERE a.kategori_pelaku_usaha = 1 and a.aksi_akhir is null and (year(a.tgl_input) = 2025 OR year(a.tgl_edit) = 2025) limit $start,$limit
             ");
+
         return $query->result();
     }
 
@@ -360,6 +370,7 @@ class AspirasiModel extends CI_Model
             LEFT OUTER JOIN kategori_dumisake AS b ON a.id_kategori_dumisake = b.id_kategori_dumisake
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.kab_usaha = '$kab' and  a.aksi = 1 and a.aksi_akhir is null and (year(a.tgl_input) = 2025 OR year(a.tgl_edit) = 2025) limit $start,$limit");
+
         return $query->result();
     }
 
@@ -381,10 +392,11 @@ class AspirasiModel extends CI_Model
                 WHERE a.kab_usaha = '$kab' AND a.kategori_pelaku_usaha = 1  AND
                 (CAST(a.aksi AS UNSIGNED) is null or  CAST(a.aksi AS UNSIGNED) = '') and (year(a.tgl_input) = 2025 OR year(a.tgl_edit) = 2025) limit $start, $limit
             ");
+
         return $query->result();
     }
 
-    //==========berdasarkan data tahun yang dipilih===============//
+    // ==========berdasarkan data tahun yang dipilih===============//
     public function getDataPelakuUsahaByYear($tahun_penerima)
     {
         $query = $this->db->query("SELECT
@@ -396,8 +408,8 @@ class AspirasiModel extends CI_Model
                 (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
                 AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake != '')
                 AND (a.aksi = '' OR a.aksi IS NULL)
-        ", array($tahun_penerima, $tahun_penerima));
-        
+        ", [$tahun_penerima, $tahun_penerima]);
+
         return $query;
     }
 }

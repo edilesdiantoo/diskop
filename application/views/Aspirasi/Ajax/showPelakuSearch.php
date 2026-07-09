@@ -58,10 +58,10 @@
                 </td>
                 <td>
                     <?php if ($key->titik_koordinat) {
-                            echo '<a target="_blank" href="https://maps.google.com/?q='.$key->titik_koordinat.'">Lokasi Map</a>';
-                        } else {
-                            echo 'Tidak Ada';
-                        }
+                        echo '<a target="_blank" href="https://maps.google.com/?q='.$key->titik_koordinat.'">Lokasi Map</a>';
+                    } else {
+                        echo 'Tidak Ada';
+                    }
                 ?>
 
                 </td>
@@ -69,26 +69,26 @@
                 <td style="text-align: center;">
                     <?php
                             if ($key->aksi == 1 && $level_user == 1 || $level_user == 3) { ?>
-                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhir/'.$key->id_pelaku_usaha) ?>"
-                        type="button" class="btn btn-outline-warning btn-xs">Detail</a><br>
-                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'1') ?>"
-                        type="button" class="btn btn-outline-success mt-1 btn-xs">Setuju</a><br>
-                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'0') ?>"
-                        type="button" class="btn btn-outline-danger mt-1 btn-xs">Tolak</a>
+                            <?php
+                            $uri = $this->uri->segment('1');
+                                $uri2 = $this->uri->segment('2');
+                                ?>
+                    <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>"
+                        type="button" class="btn btn-outline-info btn-xs"> Edit</a>
                     <?php } else {
-                                        if ($key->kk2) {
-                                            echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                        } else { ?>
+                        if ($key->kk2) {
+                            echo "<p style='color: red;'>Pernah Menerima Bantuan";
+                        } else { ?>
 
                     <!-- <a type="button">Maintenence</a> -->
                     <?php
-                                            $uri = $this->uri->segment('1');
-                                            $uri2 = $this->uri->segment('2');
-                                            ?>
+                            $uri = $this->uri->segment('1');
+                            $uri2 = $this->uri->segment('2');
+                            ?>
                     <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>"
                         type="button" class="btn btn-outline-info btn-xs"> Edit</a>
                     <?php }
-                                        } ?>
+                        } ?>
                 </td>
             </tr>
             <?php } ?>
