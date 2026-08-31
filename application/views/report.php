@@ -36,20 +36,39 @@ $tahun_pendaftaran = date('Y', strtotime($getPelakuUsahaData->tgl_input ?? date(
 </head>
 
 <body>
-	<!-- Teks Header Atas (Ekstra Tebal & Rapat) -->
+  <!-- Teks Header Atas (Extreme Bold / Gendut Maksimal) -->
 <div style="position: absolute; top: 8px; left: 0px; width: 100%; text-align: center; z-index: 2;">
-    <!-- SELAMAT Ekstra Gendut -->
-    <div style="font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 34px; font-weight: 900; color: #1c5236; -webkit-text-stroke: 2px #1c5236; letter-spacing: 1.5px; line-height: 0.9; margin: 0; padding: 0;">
-        <b>SELAMAT</b>
+    
+    <!-- SELAMAT (Gendut Maksimal Menggunakan Double Layer) -->
+    <div style="position: relative; line-height: 0.9; margin: 0; padding: 0;">
+        <div style="font-family: Helvetica, Arial, sans-serif; font-size: 34px; font-weight: 900; color: #1c5236; -webkit-text-stroke: 4px #1c5236; letter-spacing: 2px;">
+            <b>SELAMAT</b>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; font-family: Helvetica, Arial, sans-serif; font-size: 34px; font-weight: 900; color: #1c5236; letter-spacing: 2px;">
+            <b>SELAMAT</b>
+        </div>
     </div>
     
-    <!-- Teks Penjelas Ekstra Tebal -->
-    <div style="font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 900; color: #1c5236; -webkit-text-stroke: 1.4px #1c5236; letter-spacing: 1px; line-height: 1; margin: 0; padding: 0;">
-        <b>DATA ANDA SUDAH BERHASIL TERSIMPAN SEBAGAI</b>
+    <!-- Teks Baris 2 -->
+    <div style="position: relative; line-height: 1; margin-top: 3px; padding: 0;">
+        <div style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 900; color: #1c5236; -webkit-text-stroke: 2px #1c5236; letter-spacing: 0.8px;">
+            <b>DATA ANDA SUDAH BERHASIL TERSIMPAN SEBAGAI</b>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; font-family: Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 900; color: #1c5236; letter-spacing: 0.8px;">
+            <b>DATA ANDA SUDAH BERHASIL TERSIMPAN SEBAGAI</b>
+        </div>
     </div>
-    <div style="font-family: 'DejaVu Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #002B66; -webkit-text-stroke: 1.5px #002B66; letter-spacing: 0.5px; line-height: 1; margin: 0; padding: 0;">
-        <b><?= $status_judul ?></b>
+
+    <!-- Teks Baris 3 (Status) -->
+    <div style="position: relative; line-height: 1; margin-top: 3px; padding: 0;">
+        <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #002B66; -webkit-text-stroke: 2.2px #002B66; letter-spacing: 0.8px;">
+            <b><?= $status_judul ?></b>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #002B66; letter-spacing: 0.8px;">
+            <b><?= $status_judul ?></b>
+        </div>
     </div>
+
 </div>
 
 	
