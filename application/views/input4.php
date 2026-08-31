@@ -281,6 +281,14 @@
           <div class="mb-3">
             <div class="card cardx">
               <div class="card-body">
+                <label class="form-label">Jenis Bantuan</label>
+                <div class="mb-3">
+                  <select class="form-select" name="jenis_bantuan" id="jenis_bantuan" required>
+                    <option value="0">Bantuan Modal</option>
+                    <option value="1">Bantuan Gerobak</option>
+                    <option value="2">Bantuan Gerobak Listrik</option>
+                  </select>
+                </div>
                 <label class="form-label">Aspirasi</label>
                 <div class="mb-3">
                   <select class="form-select" name="kategori_pelaku_usaha" id="kategori_pelaku_usaha" required>

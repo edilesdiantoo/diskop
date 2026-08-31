@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class LaporanController extends CI_Controller
@@ -6,7 +7,7 @@ class LaporanController extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if (!$this->session->userdata('id_pegawai')) {
+        if (! $this->session->userdata('id_pegawai')) {
             redirect('LoginDiskopController');
         }
         $this->load->model('M_laporan');
@@ -14,7 +15,7 @@ class LaporanController extends CI_Controller
         $this->load->model('M_master');
         $this->load->model('M_verifikasiPelakuUsaha');
         // $this->load->model('KeputusanGubernurModel');
-        date_default_timezone_set("Asia/Jakarta");
+        date_default_timezone_set('Asia/Jakarta');
     }
 
     public function LapPelakuUsaha()
@@ -55,8 +56,6 @@ class LaporanController extends CI_Controller
     //         $this->load->view('Laporan/PerdaerahExcel', $data);
     //     }
 
-
-
     //     // if ($level == 3) {
     //     //     $data['getDataVerifikasiPelakuUsaha'] = $this->M_laporan->getDataVerifikasiPelakuUsahaVerifyLap();
     //     // } else {
@@ -72,17 +71,17 @@ class LaporanController extends CI_Controller
 
     public function getKab($prov)
     {
-        $data = array(
+        $data = [
             'getKab' => $this->M_transaksi->getKab($prov)->result(),
-        );
+        ];
         $this->load->view('Laporan/Wilayah/Kabupaten.php', $data);
     }
 
     public function getKec($kab)
     {
-        $data = array(
+        $data = [
             'getKec' => $this->M_transaksi->getKec($kab)->result(),
-        );
+        ];
 
         // print_r($data);
         $this->load->view('Laporan/Wilayah/Kecamatan.php', $data);
@@ -90,9 +89,9 @@ class LaporanController extends CI_Controller
 
     public function getKel($kec)
     {
-        $data = array(
+        $data = [
             'getKel' => $this->M_transaksi->getKel($kec)->result(),
-        );
+        ];
 
         // print_r($data);
         $this->load->view('Laporan/Wilayah/Kelurahan.php', $data);
@@ -100,11 +99,11 @@ class LaporanController extends CI_Controller
 
     public function Perwilayah()
     {
-        $kab                     = $this->input->post('kab');
-        $kec                     = $this->input->post('kec');
-        $kel                     = $this->input->post('kel');
-        $level                   = $this->session->userdata('level_user');
-        $status                  = $this->input->post('status');
+        $kab = $this->input->post('kab');
+        $kec = $this->input->post('kec');
+        $kel = $this->input->post('kel');
+        $level = $this->session->userdata('level_user');
+        $status = $this->input->post('status');
         $data['getdataAdminKab'] = $this->M_laporan->getdataAdminKab($kab, $kec, $kel, $status, $level)->result();
         // print_r($data);
         $this->load->view('Laporan/Wilayah/DataWilayah.php', $data);
@@ -112,19 +111,19 @@ class LaporanController extends CI_Controller
 
     public function pdf()
     {
-        $kab                     = $this->input->post('kab');
-        $kec                     = $this->input->post('kec');
-        $kel                     = $this->input->post('kel');
-        $level                   = $this->session->userdata('level_user');
-        $status                  = $this->input->post('status');
-        $format                  = $this->input->post('format');
+        $kab = $this->input->post('kab');
+        $kec = $this->input->post('kec');
+        $kel = $this->input->post('kel');
+        $level = $this->session->userdata('level_user');
+        $status = $this->input->post('status');
+        $format = $this->input->post('format');
         $data['tahunPengajuan'] = 2023;
-        $data['status']          = $status;
+        $data['status'] = $status;
         $data['getdataAdminKab'] = $this->M_laporan->getdataAdminKab($kab, $kec, $kel, $status, $level)->result();
         // print_r($data['getdataAdminKab']);f
         if ($format == '1') {
             $this->load->view('Laporan/PerdaerahPDF', $data);
-        } else if ($format == '2') {
+        } elseif ($format == '2') {
 
             // print_r($data);
             $this->load->view('Laporan/PerdaerahExcel', $data);
@@ -135,19 +134,19 @@ class LaporanController extends CI_Controller
 
     public function pdf2024()
     {
-        $kab                     = $this->input->post('kab');
-        $kec                     = $this->input->post('kec');
-        $kel                     = $this->input->post('kel');
-        $level                   = $this->session->userdata('level_user');
-        $status                  = $this->input->post('status');
-        $format                  = $this->input->post('format');
+        $kab = $this->input->post('kab');
+        $kec = $this->input->post('kec');
+        $kel = $this->input->post('kel');
+        $level = $this->session->userdata('level_user');
+        $status = $this->input->post('status');
+        $format = $this->input->post('format');
         $data['tahunPengajuan'] = 2024;
-        $data['status']          = $status;
+        $data['status'] = $status;
         $data['getdataAdminKab'] = $this->M_laporan->getdataAdminKab2024($kab, $kec, $kel, $status, $level)->result();
         // print_r($data['getdataAdminKab']);
         if ($format == '1') {
             $this->load->view('Laporan/PerdaerahPDF', $data);
-        } else if ($format == '2') {
+        } elseif ($format == '2') {
             // print_r($data);
             $this->load->view('Laporan/PerdaerahExcel', $data);
         } else {
@@ -157,34 +156,34 @@ class LaporanController extends CI_Controller
 
     public function DataPerKab()
     {
-        $data = array(
+        $data = [
             'getDataPerkab' => $this->M_laporan->getDataPerkab()->result(),
-        );
+        ];
         $this->template->display('Transaksi/ShowDataPerkabupaten', $data);
     }
 
     public function DataPerKab2024()
     {
-        $data = array(
+        $data = [
             'getDataPerkab' => $this->M_laporan->getDataPerkab2024()->result(),
-        );
+        ];
         $this->template->display('Transaksi/ShowDataPerkabupaten', $data);
     }
 
     public function TotalCalonPenerima()
     {
-        $kab   = $this->session->userdata('kab');
+        $kab = $this->session->userdata('kab');
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $data = array(
+            $data = [
                 'GetKab' => $this->M_transaksi->getKab(15)->result(),
                 // 'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin()->result()
-            );
+            ];
             $this->template->display('Transaksi/ShowDataCalonPenerimaAdmin', $data);
         } else {
-            $data = array(
-                'TotalCalonPenerima' => $this->M_laporan->TotalCalonPenerima($kab)->result()
-            );
+            $data = [
+                'TotalCalonPenerima' => $this->M_laporan->TotalCalonPenerima($kab)->result(),
+            ];
 
             // print_r($data);
             $this->template->display('Transaksi/ShowTotalCalonPenerima', $data);
@@ -193,18 +192,18 @@ class LaporanController extends CI_Controller
 
     public function TotalCalonPenerima2024()
     {
-        $kab   = $this->session->userdata('kab');
+        $kab = $this->session->userdata('kab');
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $data = array(
+            $data = [
                 'GetKab' => $this->M_transaksi->getKab(15)->result(),
                 // 'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin()->result()
-            );
+            ];
             $this->template->display('Transaksi/ShowDataCalonPenerimaAdmin2024', $data);
         } else {
-            $data = array(
-                'TotalCalonPenerima' => $this->M_laporan->TotalCalonPenerima2024($kab)->result()
-            );
+            $data = [
+                'TotalCalonPenerima' => $this->M_laporan->TotalCalonPenerima2024($kab)->result(),
+            ];
 
             // print_r($data);
             $this->template->display('Transaksi/ShowTotalCalonPenerima', $data);
@@ -213,72 +212,77 @@ class LaporanController extends CI_Controller
 
     public function getCalonPenerimaAdmin($id_kab)
     {
-        $data = array( 
-            'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin($id_kab)->result()
+        $data = [
+            'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin($id_kab)->result(),
             // 'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin2024($id_kab)->result()
-        );
+        ];
         // print_r($data);
         $this->load->view('Transaksi/Ajax/ShowCalonPenerimaAdmin', $data);
     }
 
     public function getCalonPenerimaAdmin2024($id_kab)
     {
-        $data = array(
+        $data = [
             // 'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin($id_kab)->result()
-            'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin2024($id_kab)->result()
-        );
+            'TotalCalonPenerimaAdmin' => $this->M_laporan->TotalCalonPenerimaAdmin2024($id_kab)->result(),
+        ];
         // print_r($data);
         $this->load->view('Transaksi/Ajax/ShowCalonPenerimaAdmin', $data);
     }
 
     public function rekapRekomendasi()
     {
-        $kab  = $this->session->userdata('kab');
-        $data = array(
-            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi($kab)->result()
-        );
+        $kab = $this->session->userdata('kab');
+        $data = [
+            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi($kab)->result(),
+        ];
         $this->template->display('Aspirasi/Monitoring/rekapRekomendasi', $data);
     }
 
     public function rekapRekomendasi2024()
     {
-        $kab  = $this->session->userdata('kab');
-        $data = array(
-            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi2024($kab)->result()
-        );
+        $kab = $this->session->userdata('kab');
+        $data = [
+            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi2024($kab)->result(),
+        ];
         // echo $kab;
         $this->template->display('Aspirasi/Monitoring/rekapRekomendasi2024', $data);
     }
 
-    public function getByYearsKab() 
+    public function getByYearsKab()
     {
-        $kab  = $this->input->post('kab');
-        $tahun  = $this->input->post('tahun');
-        $data = array(
-            'getByYearsKab' => $this->M_laporan->getByYearsKab($tahun,$kab)->result(),
+        $kab = $this->input->post('kab');
+        $tahun = $this->input->post('tahun');
+        $jenis_bantuan = $this->input->post('jenis_bantuan');
+
+        // Strict comparison agar nilai "0" tidak hilang
+        $jenis_bantuan = ($jenis_bantuan !== null && $jenis_bantuan !== '') ? $jenis_bantuan : null;
+
+        $data = [
+            'getByYearsKab' => $this->M_laporan->getByYearsKab($tahun, $kab, $jenis_bantuan)->result(),
             'kab' => $kab,
             'tahun' => $tahun,
-        );
-        // echo $kab;
-        $this->load->view('Aspirasi/Monitoring/rekapRekomendasiByYearsKab', $data); 
-    }
+            'jenis_bantuan' => $jenis_bantuan,
+        ];
 
+        $this->load->view('Aspirasi/Monitoring/rekapRekomendasiByYearsKab', $data);
+    }
 
     public function rekapRekomendasiAccKabid()
     {
-        $kab  = $this->session->userdata('kab');
-        $data = array(
-            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasiBelumAccKabid($kab)->result()
-        );
+        $kab = $this->session->userdata('kab');
+        $data = [
+            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasiBelumAccKabid($kab)->result(),
+        ];
         $this->template->display('Aspirasi/Monitoring/rekapRekomendasiAccKabid', $data);
     }
 
     public function rekapRekomendasiAccKabid2024()
     {
-        $kab  = $this->session->userdata('kab');
-        $data = array(
-            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasiBelumAccKabid2024($kab)->result()
-        );
+        $kab = $this->session->userdata('kab');
+        $data = [
+            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasiBelumAccKabid2024($kab)->result(),
+        ];
         $this->template->display('Aspirasi/Monitoring/rekapRekomendasiAccKabid2024', $data);
     }
 
@@ -303,33 +307,33 @@ class LaporanController extends CI_Controller
     public function getRekomendasi()
     {
         $rekomendasi = $this->input->post('nama');
-        $id_kab      = $this->input->post('kab');
+        $id_kab = $this->input->post('kab');
         // strip out all whitespace
         $zname_clean = preg_replace('/\s*/', '', $rekomendasi);
         // convert the string to all lowercase
         $zname_clean_lower = strtolower($zname_clean);
-        $data              = array(
+        $data = [
             'getRekomendasi' => $this->M_laporan->getRekomendasi($zname_clean_lower, $id_kab)->result(),
-            'func'           => $this->input->post('func'),
-        );
+            'func' => $this->input->post('func'),
+        ];
         $this->load->view('Aspirasi/Monitoring/autocompleteRekomendasi', $data);
     }
 
     public function pdfRekomendasi()
     {
-        $kab    = $this->input->post('kab');
-        $kec    = $this->input->post('kec');
-        $kel    = $this->input->post('kel');
-        $level  = $this->session->userdata('level_user');
+        $kab = $this->input->post('kab');
+        $kec = $this->input->post('kec');
+        $kel = $this->input->post('kel');
+        $level = $this->session->userdata('level_user');
         $status = $this->input->post('status');
         $format = $this->input->post('format');
         // strip out all whitespace
         $rekomen_dari = $this->input->post('rekomendasi');
-        $zname_clean  = preg_replace('/\s*/', '', $rekomen_dari);
+        $zname_clean = preg_replace('/\s*/', '', $rekomen_dari);
         // convert the string to all lowercase
         $zname_clean_lower = strtolower($zname_clean);
 
-        $rekomendasi               = $zname_clean_lower;
+        $rekomendasi = $zname_clean_lower;
         $data['getpdfRekomendasi'] = $this->M_laporan->getpdfRekomendasi($kab, $kec, $kel, $status, $level, $rekomendasi)->result();
         $data['tahun'] = 2023;
         // print_r($data['getpdfRekomendasi']);
@@ -372,17 +376,17 @@ class LaporanController extends CI_Controller
 
     public function pdfRekomendasi2024()
     {
-        $tahun    = $this->input->post('tahun');
-        $kab      = $this->input->post('kab');
-        $kec      = $this->input->post('kec');
-        $kel      = $this->input->post('kel');
-        $level    = $this->session->userdata('level_user');
-        $status   = $this->input->post('status');
-        $format   = $this->input->post('format');
-        
+        $tahun = $this->input->post('tahun');
+        $kab = $this->input->post('kab');
+        $kec = $this->input->post('kec');
+        $kel = $this->input->post('kel');
+        $level = $this->session->userdata('level_user');
+        $status = $this->input->post('status');
+        $format = $this->input->post('format');
+
         // Strip out all whitespace and make it lowercase
         $rekomen_dari = $this->input->post('rekomendasi');
-        $zname_clean  = preg_replace('/\s*/', '', $rekomen_dari);
+        $zname_clean = preg_replace('/\s*/', '', $rekomen_dari);
         $zname_clean_lower = strtolower($zname_clean);
         $rekomendasi = $zname_clean_lower;
 
@@ -404,5 +408,4 @@ class LaporanController extends CI_Controller
             $this->load->view('Aspirasi/Monitoring/pdfRekomendasi', $data);
         }
     }
-
-}   
+}

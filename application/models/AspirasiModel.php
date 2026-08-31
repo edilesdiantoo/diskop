@@ -225,60 +225,76 @@ class AspirasiModel extends CI_Model
         return $query;
     }
 
-    public function getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun)
+    public function getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun = null, $jenis_bantuan = null)
     {
         $level = $this->session->userdata('level_user');
 
-        // Set the query condition based on user level
+        // Filter Kabupaten
+        $where_aksi = '';
         if ($level == 1) {
-            $where_aksi = "AND a.kab_usaha = '$kab_usaha'";
-        } elseif ($level == 3) {
-            $where_aksi = "AND a.kab_usaha = '$kab'";
+            if (! empty($kab_usaha)) {
+                $where_aksi = "AND a.kab_usaha = '$kab_usaha'";
+            }
         } else {
-            $where_aksi = "AND a.kab_usaha = '$kab'";
+            if (! empty($kab)) {
+                $where_aksi = "AND a.kab_usaha = '$kab'";
+            }
         }
 
-        // Handling penerima condition
+        // Filter Tahun (Fleksibel jika tahun diisi/tidak)
+        $tahun_where = '';
+        $params = [];
+        if (! empty($tahun)) {
+            $tahun_where = 'AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)';
+            $params[] = $tahun;
+            $params[] = $tahun;
+        }
+
+        // Filter Penerima
+        $penerimaWhere = '';
         if ($penerima == 1) {
             $penerimaWhere = 'AND (kk IN (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) OR (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk))';
-        } else {
-            $penerimaWhere = '';
         }
 
-        // Handling search by name if provided
-        if ($nama) {
-            $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) LIKE '%$nama%'";
-        } else {
-            $like_val = '';
+        // Filter Nama / No Urut
+        $like_val = '';
+        if (! empty($nama)) {
+            $nama_clean = strtolower(trim($nama));
+            $like_val = "AND (LOWER(REPLACE(a.nama_lengkap,' ','')) LIKE '%$nama_clean%' OR a.no_urut LIKE '%$nama_clean%')";
         }
 
-        // Handling the category filter if provided
-        if ($get_kategori) {
+        // Filter Kategori
+        $kategori_ada = '';
+        if (! empty($get_kategori)) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
-        } else {
-            $kategori_ada = '';
         }
 
-        // Query with dynamic year filtering based on the selected year
+        // / Filter Jenis Bantuan (0: Bantuan Modal, 1: Bantuan Gerobak, 2: Bantuan Gerobak Listrik)
+        $bantuan_where = '';
+        if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
+            $bantuan_where = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        }
+
+        // Eksekusi Query
         $query = $this->db->query(
             "SELECT a.*,
                     (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) as kk3,
-                    (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) as kk2
+                    (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk LIMIT 1) as kk2
                 FROM pelaku_usaha as a 
                 WHERE a.kategori_pelaku_usaha = 1 
+                $tahun_where
                 $where_aksi 
-                AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?) 
-                AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
-                AND (a.aksi = '1' OR a.aksi IS NULL)
                 $kategori_ada 
+                $bantuan_where
                 $penerimaWhere
-                ", [$tahun, $tahun] // Binding the year parameter for both tgl_input and tgl_edit
+                $like_val
+                ", $params
         );
 
         return $query;
     }
 
-    public function getDataPelakUsaha($kab, $nama, $tahun)
+    public function getDataPelakUsaha($kab, $nama, $tahun, $jenis_bantuan = null)
     {
         $level = $this->session->userdata('level_user');
 
@@ -297,24 +313,31 @@ class AspirasiModel extends CI_Model
 
         // Sanitize the nama input to avoid unwanted spaces if provided
         if ($nama) {
-            // Clean the nama search input by trimming spaces and converting it to lowercase
-            $nama_clean = strtolower(trim($nama));  // Ensure lowercase and no leading/trailing spaces
+            $nama_clean = strtolower(trim($nama));
             $like_val = "AND (LOWER(REPLACE(a.nama_lengkap, ' ', '')) LIKE '%$nama_clean%' OR a.no_urut LIKE '%$nama_clean%')";
+        }
+
+        // Handling filter jenis bantuan jika dipilih
+        if (! empty($jenis_bantuan)) {
+            $bantuan_where = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        } else {
+            $bantuan_where = '';
         }
 
         // Prepare the query with filtering by year (based on tahun)
         $query = $this->db->query(
             "SELECT a.*, 
                 (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) AS kk3,
-                (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk LIMIT 1) as kk2  -- LIMIT 1 to ensure only one row is returned
+                (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk LIMIT 1) as kk2
             FROM pelaku_usaha as a 
             WHERE a.kategori_pelaku_usaha = 1 
             $where_aksi 
             AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?) 
             AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
             AND (a.aksi = '' OR a.aksi IS NULL)
+            $bantuan_where
             $like_val 
-            ", [$tahun, $tahun]  // Bind the year parameter for both tgl_input and tgl_edit
+            ", [$tahun, $tahun]
         );
 
         return $query;
@@ -397,18 +420,24 @@ class AspirasiModel extends CI_Model
     }
 
     // ==========berdasarkan data tahun yang dipilih===============//
-    public function getDataPelakuUsahaByYear($tahun_penerima)
+    public function getDataPelakuUsahaByYear($tahun_penerima, $jenis_bantuan = null)
     {
+        // Filter Jenis Bantuan: Jika dipilih angka (1/2/3), filter aktif. Jika kosong, tarik SEMUA jenis bantuan.
+        $bantuan_where = '';
+        if (! empty($jenis_bantuan)) {
+            $bantuan_where = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        }
+
         $query = $this->db->query("SELECT
-                a.*,
-                (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) AS kk3,
-                (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) AS kk2
-            FROM pelaku_usaha AS a 
-            WHERE
-                (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
-                AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake != '')
-                AND (a.aksi = '' OR a.aksi IS NULL)
-        ", [$tahun_penerima, $tahun_penerima]);
+            a.*,
+            (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) AS kk3,
+            (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk LIMIT 1) AS kk2
+        FROM pelaku_usaha AS a 
+        WHERE
+            (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
+            AND a.kategori_pelaku_usaha = 1
+            $bantuan_where
+    ", [$tahun_penerima, $tahun_penerima]);
 
         return $query;
     }

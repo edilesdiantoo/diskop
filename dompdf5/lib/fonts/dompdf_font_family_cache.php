@@ -80,4 +80,7 @@
   'nunito sans' => array(
     'normal' => $fontDir . '\aa36004e2e2488deaffe12114308649f',
   ),
+  'montserrat' => array(
+    'normal' => $fontDir . '\5aa72c700a9156b5f6ef5ef0d10a5fbb',
+  ),
 ) ?>

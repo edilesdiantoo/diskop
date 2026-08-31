@@ -27,6 +27,7 @@
                             <div class="col-lg-12">
                                 <!-- Using flexbox for layout with equal space on both sides -->
                                 <div class="d-flex justify-content-between mb-3">
+                                    <!-- 1. Tahun Penerima -->
                                     <div style="flex: 1;" class="mr-3">
                                         <select class="form-control getTahunPenerima" id="tahun_penerima">
                                             <option value="">-Tahun Penerima-</option>
@@ -36,7 +37,19 @@
                                             <option value="2026">2026</option>
                                         </select>
                                     </div>
-                                    <div style="flex: 1;" class ="mr-2">
+
+                                    <!-- 2. Tambahan: Jenis Bantuan -->
+                                    <div style="flex: 1;" class="mr-3">
+                                        <select class="form-control" id="jenis_bantuan">
+                                            <option value="">-Semua Jenis Bantuan-</option>
+                                            <option value="0">Bantuan Modal</option>
+                                            <option value="1">Bantuan Gerobak</option>
+                                            <option value="2">Bantuan Gerobak Listrik</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 3. Pilih Kab -->
+                                    <div style="flex: 1;" class="mr-2">
                                         <select class="form-control level_satu" id="kab_usaha">
                                             <option value="">-Pilih Kab-</option>
                                             <?php
@@ -47,11 +60,12 @@
                             ?>
                                         </select>
                                     </div>
-                                    <button type="submit" id="print" class="btn btn-outline-warning mr-1">Print</button>
+
+                                    <!-- <button type="submit" id="print" class="btn btn-outline-warning mr-1">Print</button> -->
                                 </div>
                             </div>
                         </div>
-                    <?php } ?>
+                        <?php } ?>
                         <div class="table-responsive">
                             <table id="resultDiv" class="table">
                                 
@@ -98,35 +112,34 @@
         document.getElementById('totCalonPenrima').innerHTML = totalAspirasi;
     });
 </script>
+
 <script type="text/javascript">
     $(document).ready(function() {
-        // When the year or kabupaten dropdown changes
-        $('#kab_usaha, #tahun_penerima').change(function() {
-            var kab = $('#kab_usaha').val(); // Get selected kab
-            var tahun = $('#tahun_penerima').val(); // Get selected tahun
+        // Trigger AJAX saat salah satu dropdown (kab, tahun, atau jenis bantuan) berubah
+        $('#kab_usaha, #tahun_penerima, #jenis_bantuan').change(function() {
+            var kab           = $('#kab_usaha').val();
+            var tahun         = $('#tahun_penerima').val();
+            var jenis_bantuan = $('#jenis_bantuan').val();
 
             // Check if tahun is selected
             if (tahun === '') {
                 alert('Harus pilih tahun!');
-                return; // Stop the function if no year is selected
+                return;
             }
 
             // Check if kab is selected
             if (kab !== '') {
                 $.ajax({
-                    url: '<?= base_url('LaporanController/getByYearsKab'); ?>', // Update this with the correct controller/method URL
+                    url: '<?= base_url('LaporanController/getByYearsKab'); ?>',
                     type: 'POST',
                     dataType: 'html',
                     data: {
                         kab: kab,
-                        tahun: tahun
+                        tahun: tahun,
+                        jenis_bantuan: jenis_bantuan // Kirim parameter jenis bantuan
                     },
-
                     success: function(response) {
-                        // console.log(response);
-                        
-                        // Handle the successful response here, e.g., updating a table
-                        $('#resultDiv').html(response); // This is where you display your data
+                        $('#resultDiv').html(response);
                     },
                     error: function(xhr, status, error) {
                         console.error(error);
@@ -136,4 +149,3 @@
         });
     });
 </script>
-

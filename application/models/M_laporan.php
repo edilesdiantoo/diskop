@@ -1,4 +1,6 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_laporan extends CI_Model
 {
@@ -24,6 +26,7 @@ class M_laporan extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.kab_usaha = '$kab' and a.aksi = '1' and a.aksi_akhir is not null limit 10
             ");
+
         return $query->result();
     }
 
@@ -44,6 +47,7 @@ class M_laporan extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.kab_usaha = '$kab' limit 10
             ");
+
         return $query->result();
     }
 
@@ -60,6 +64,7 @@ class M_laporan extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.aksi_akhir = '1'
             ");
+
         return $query->result();
     }
 
@@ -78,9 +83,9 @@ class M_laporan extends CI_Model
         }
         if ($status == '3') {
             $status_flag = "AND (a.aksi = '' or a.aksi IS NULL or a.aksi = '0')";
-        } else if ($status == 2) {
+        } elseif ($status == 2) {
             $status_flag = "AND a.aksi_akhir = '1'";
-        } else if ($status == 1) {
+        } elseif ($status == 1) {
             $status_flag = "AND a.aksi = '1'";
         } else {
             $status_flag = "AND a.aksi = '0'";
@@ -105,6 +110,7 @@ class M_laporan extends CI_Model
             WHERE a.prov_usaha = '15' $wilayah $status_flag AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND (a.kategori_pelaku_usaha = 0 OR a.kategori_pelaku_usaha IS NULL OR a.kategori_pelaku_usaha ='') 
             ORDER BY a.aksi_akhir_date asc
             ");
+
         return $query;
     }
 
@@ -123,7 +129,7 @@ class M_laporan extends CI_Model
         }
         if ($status == '0') {
             $status_flag = "AND (a.aksi = '0')";
-        } else if ($status == 1) {
+        } elseif ($status == 1) {
             $status_flag = "AND a.aksi = '1'";
         }
 
@@ -146,6 +152,7 @@ class M_laporan extends CI_Model
             WHERE a.prov_usaha = '15' $wilayah $status_flag AND (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024)  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND (a.kategori_pelaku_usaha = 0 OR a.kategori_pelaku_usaha IS NULL OR a.kategori_pelaku_usaha ='') 
             ORDER BY (year(a.tgl_input) OR year(a.tgl_edit)) asc
             ");
+
         return $query;
     }
 
@@ -175,6 +182,7 @@ class M_laporan extends CI_Model
                 a.kab_usaha, r.name
             ORDER BY
                 a.kab_usaha DESC;");
+
         return $query;
     }
 
@@ -206,6 +214,7 @@ class M_laporan extends CI_Model
                 a.kab_usaha, r.name
             ORDER BY
                 a.kab_usaha DESC;");
+
         return $query;
     }
 
@@ -223,6 +232,7 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kec_usaha = a.kec_usaha AND b.id_kategori_dumisake = 6 AND aksi_akhir = 1 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND (b.kategori_pelaku_usaha != 1 OR b.kategori_pelaku_usaha IS NULL OR b.kategori_pelaku_usaha ='')  GROUP BY b.id_kategori_dumisake) as wp_5
         FROM pelaku_usaha as a WHERE kec_usaha != 0 AND aksi_akhir = 1 AND a.kab_usaha = '$kab' AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND (a.kategori_pelaku_usaha != 1 OR a.kategori_pelaku_usaha IS NULL OR a.kategori_pelaku_usaha ='') 
         GROUP BY a.kec_usaha;");
+
         return $query;
     }
 
@@ -241,12 +251,13 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kec_usaha = a.kec_usaha AND b.id_kategori_dumisake = 6  AND b.aksi = 1  AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND (b.kategori_pelaku_usaha != 1 OR b.kategori_pelaku_usaha IS NULL OR b.kategori_pelaku_usaha ='') AND (year(tgl_input) = 2024 OR year(tgl_edit) = 2024)  GROUP BY b.id_kategori_dumisake) as wp_5
         FROM pelaku_usaha as a WHERE a.kec_usaha != 0 AND a.kab_usaha = '$kab' AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND (a.kategori_pelaku_usaha != 1 OR a.kategori_pelaku_usaha IS NULL OR a.kategori_pelaku_usaha ='') AND (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) AND a.aksi= 1
         GROUP BY a.kec_usaha;");
+
         return $query;
     }
 
     public function TotalCalonPenerimaAdmin($id_kab)
-{
-    $query = $this->db->query("SELECT 
+    {
+        $query = $this->db->query("SELECT 
         a.id_pelaku_usaha, a.kab_usaha, a.kec_usaha,
         (SELECT name FROM districts WHERE id = a.kec_usaha) as kec_name,
         COUNT(a.kec_usaha) total_pelaku,
@@ -263,8 +274,9 @@ class M_laporan extends CI_Model
         AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
         AND (a.kategori_pelaku_usaha != 1 OR a.kategori_pelaku_usaha IS NULL OR a.kategori_pelaku_usaha ='') 
         GROUP BY a.kec_usaha, a.id_pelaku_usaha, a.kab_usaha;"); // Add a.id_pelaku_usaha and a.kab_usaha to GROUP BY
-    return $query;
-}
+
+        return $query;
+    }
 
     public function TotalCalonPenerimaAdmin2024($id_kab)
     {
@@ -340,6 +352,7 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 6 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as wp_5			
         FROM pelaku_usaha as a WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha =1  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') and a.aksi_akhir IS NULL
         GROUP BY a.rekomendasi_dari;");
+
         return $query;
     }
 
@@ -356,96 +369,113 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 6 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='')  AND (year(b.tgl_input) = 2024 OR year(b.tgl_edit) = 2024)  GROUP BY b.id_kategori_dumisake) as wp_5			
         FROM pelaku_usaha as a WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha =1  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') and (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024)
         GROUP BY a.rekomendasi_dari;");
+
         return $query;
     }
 
-    public function getByYearsKab($tahun, $kab)
+    public function getByYearsKab($tahun, $kab, $jenis_bantuan = null)
     {
+        // Filter jenis bantuan untuk subquery (b) dan main query (a)
+        $bantuan_where_b = '';
+        $bantuan_where_a = '';
+        if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
+            $bantuan_where_b = "AND b.jenis_bantuan = '$jenis_bantuan'";
+            $bantuan_where_a = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        }
+
         // Define the parameters to pass to the query
-        $params = array();
-        for ($i = 0; $i < 7; $i++) { 
-            // Loop for each placeholder in the subqueries
+        $params = [];
+        for ($i = 0; $i < 7; $i++) {
+            // Loop for each placeholder in the 7 subqueries
             $params[] = $tahun;
             $params[] = $tahun;
         }
-        $params[] = $kab; // For kab_usaha
-        $params[] = $tahun; // For the main query year
-        $params[] = $tahun; // For the main query year
+        $params[] = $kab;   // For a.kab_usaha
+        $params[] = $tahun; // For main query YEAR(a.tgl_input)
+        $params[] = $tahun; // For main query YEAR(a.tgl_edit)
 
         $query = $this->db->query("
-            SELECT 
-                COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
-                a.kab_usaha, a.rekomendasi_dari,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 7 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as mil_5,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 1 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as mil_20,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 2 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as mil_10,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 3 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as mak_10,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 4 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as mak_5,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 5 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as wp_10,
-                (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                    FROM pelaku_usaha as b 
-                    WHERE b.kab_usaha = a.kab_usaha 
-                        AND b.kategori_pelaku_usaha IS NOT NULL 
-                        AND b.rekomendasi_dari = a.rekomendasi_dari 
-                        AND b.id_kategori_dumisake = 6 
-                        AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                        AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    GROUP BY b.id_kategori_dumisake) as wp_5
-            FROM pelaku_usaha as a 
-            WHERE a.kab_usaha = ? 
-                AND a.kategori_pelaku_usaha = 1  
-                AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake != '') 
-                AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
-            GROUP BY a.rekomendasi_dari;
-        ", $params); // Passing the parameters array to the query
+        SELECT 
+            COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
+            a.kab_usaha, a.rekomendasi_dari,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 7 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as mil_5,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 1 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as mil_20,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 2 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as mil_10,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 3 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as mak_10,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 4 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as mak_5,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 5 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as wp_10,
+            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
+                FROM pelaku_usaha as b 
+                WHERE b.kab_usaha = a.kab_usaha 
+                    AND b.kategori_pelaku_usaha IS NOT NULL 
+                    AND b.rekomendasi_dari = a.rekomendasi_dari 
+                    AND b.id_kategori_dumisake = 6 
+                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
+                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
+                    $bantuan_where_b
+                GROUP BY b.id_kategori_dumisake) as wp_5
+        FROM pelaku_usaha as a 
+        WHERE a.kab_usaha = ? 
+            AND a.kategori_pelaku_usaha = 1  
+            AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake != '') 
+            AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
+            $bantuan_where_a
+        GROUP BY a.rekomendasi_dari;
+    ", $params);
 
         return $query;
     }
@@ -462,9 +492,9 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 6 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir = 1 GROUP BY b.id_kategori_dumisake) as wp_5			
         FROM pelaku_usaha as a WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha =1  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') and a.aksi_akhir = 1
         GROUP BY a.rekomendasi_dari;");
+
         return $query;
     }
-
 
     public function TotalCalonPenerimaAspirasiBelumAccKabid2024($kab)
     {
@@ -479,6 +509,7 @@ class M_laporan extends CI_Model
         (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 6 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi = 1 AND (year(b.tgl_input) = 2024 OR year(b.tgl_edit) = 2024) GROUP BY b.id_kategori_dumisake) as wp_5			
         FROM pelaku_usaha as a WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha =1  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') and a.aksi = 1 AND (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024)
         GROUP BY a.rekomendasi_dari;");
+
         return $query;
     }
 
@@ -500,9 +531,9 @@ class M_laporan extends CI_Model
         }
         if ($status == '3') {
             $status_flag = "AND (a.aksi = '' or aksi IS NULL)";
-        } else if ($status == 2) {
+        } elseif ($status == 2) {
             $status_flag = "AND a.aksi_akhir = '1'";
-        } else if ($status == 1) {
+        } elseif ($status == 1) {
             $status_flag = "AND (a.aksi_akhir = '' OR a.aksi_akhir IS NULL) ";
         } else {
             $status_flag = "AND a.aksi_akhir = '0'";
@@ -525,6 +556,7 @@ class M_laporan extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.prov_usaha = '15' $wilayah $status_flag AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND a.kategori_pelaku_usaha = 1 ORDER BY a.rekomendasi_dari
             ");
+
         return $query;
     }
 
@@ -532,12 +564,12 @@ class M_laporan extends CI_Model
     {
         if ($kab) {
             $wilayahKab = "AND a.kab_usaha = '$kab'";
-        }   
+        }
 
         if ($kec) {
             $wilayahKec = "AND a.kec_usaha = '$kec'";
         } else {
-            $wilayahKec = "";
+            $wilayahKec = '';
         }
 
         // if ($kel) {
@@ -548,9 +580,9 @@ class M_laporan extends CI_Model
         }
         if ($status == '3') {
             $status_flag = "AND (a.aksi = '' or aksi IS NULL)";
-        } else if ($status == 2) {
+        } elseif ($status == 2) {
             $status_flag = "AND a.aksi = '1'";
-        } else if ($status == 1) {
+        } elseif ($status == 1) {
             $status_flag = "AND (a.aksi = '' OR a.aksi IS NULL) ";
         } else {
             $status_flag = "AND a.aksi = '0'";
@@ -575,45 +607,46 @@ class M_laporan extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.prov_usaha = '15' $wilayah $wilayahKab $wilayahKec AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') AND a.kategori_pelaku_usaha = 1 and (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) ORDER BY a.rekomendasi_dari
             ");
+
         return $query;
     }
 
     public function getpdfRekomendasiByYears($kab, $kec, $kel, $status, $level, $rekomendasi, $tahun)
-{
-    if ($kab) {
-        $wilayahKab = "AND a.kab_usaha = '$kab'";
-    }
+    {
+        if ($kab) {
+            $wilayahKab = "AND a.kab_usaha = '$kab'";
+        }
 
-    if ($kec) {
-        $wilayahKec = "AND a.kec_usaha = '$kec'";
-    } else {
-        $wilayahKec = "";
-    }
+        if ($kec) {
+            $wilayahKec = "AND a.kec_usaha = '$kec'";
+        } else {
+            $wilayahKec = '';
+        }
 
-    if ($kel) {
-        $wilayahKel = "AND a.kel_usaha = '$kel'";
-    } else {
-        $wilayahKel = "";
-    }
+        if ($kel) {
+            $wilayahKel = "AND a.kel_usaha = '$kel'";
+        } else {
+            $wilayahKel = '';
+        }
 
-    if ($rekomendasi) {
-        $wilayahRekomendasi = "AND LOWER(REPLACE(a.rekomendasi_dari, ' ', '')) LIKE '%$rekomendasi%'";
-    } else {
-        $wilayahRekomendasi = "";
-    }
+        if ($rekomendasi) {
+            $wilayahRekomendasi = "AND LOWER(REPLACE(a.rekomendasi_dari, ' ', '')) LIKE '%$rekomendasi%'";
+        } else {
+            $wilayahRekomendasi = '';
+        }
 
-    if ($status == '3') {
-        $status_flag = "AND (a.aksi = '' OR a.aksi IS NULL)";
-    } else if ($status == 2) {
-        $status_flag = "AND a.aksi = '1'";
-    } else if ($status == 1) {
-        $status_flag = "AND (a.aksi = '' OR a.aksi IS NULL)";
-    } else {
-        $status_flag = "AND a.aksi = '0'";
-    }
+        if ($status == '3') {
+            $status_flag = "AND (a.aksi = '' OR a.aksi IS NULL)";
+        } elseif ($status == 2) {
+            $status_flag = "AND a.aksi = '1'";
+        } elseif ($status == 1) {
+            $status_flag = "AND (a.aksi = '' OR a.aksi IS NULL)";
+        } else {
+            $status_flag = "AND a.aksi = '0'";
+        }
 
-    // Query with dynamic YEAR filtering based on selected year
-    $query = $this->db->query("
+        // Query with dynamic YEAR filtering based on selected year
+        $query = $this->db->query("
         SELECT 
             a.nama_ibu, a.aksi_akhir, a.aksi, a.jk, a.id_pelaku_usaha, a.rekomendasi_dari,
             a.alamat_usaha, a.jenis_usaha, a.nama_usaha, a.nib_sku_iumk, a.hp, a.kk, a.nik, 
@@ -641,16 +674,15 @@ class M_laporan extends CI_Model
         AND a.kategori_pelaku_usaha = 1 
         AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?) 
         ORDER BY a.rekomendasi_dari
-    ", array($tahun, $tahun));  // Binding the year parameter for both tgl_input and tgl_edit
+    ", [$tahun, $tahun]);  // Binding the year parameter for both tgl_input and tgl_edit
 
-    return $query;
-}
-
-
+        return $query;
+    }
 
     public function getRekomendasi($rekomendasi, $id_kab)
     {
         $query = $this->db->query("SELECT rekomendasi_dari  FROM pelaku_usaha WHERE kategori_pelaku_usaha = '1' AND rekomendasi_dari IS NOT NULL AND kab_usaha ='$id_kab' AND rekomendasi_dari LIKE '%$rekomendasi%' GROUP BY rekomendasi_dari");
+
         return $query;
     }
 
@@ -658,8 +690,8 @@ class M_laporan extends CI_Model
     // {
     //     $query = $this->db->query("SELECT a.kec_usaha,
     //     (SELECT name FROM districts WHERE id = a.kec_usaha) as kec_name,  COUNT(a.kec_usaha) as total_pelaku
-    //     FROM pelaku_usaha as a 
-    //     WHERE a.kec_usaha != 0 AND a.aksi_akhir = 1 AND a.kab_usaha = '$kab' 
+    //     FROM pelaku_usaha as a
+    //     WHERE a.kec_usaha != 0 AND a.aksi_akhir = 1 AND a.kab_usaha = '$kab'
     //     GROUP BY a.kec_usaha
     //     ");
     //     return $query;
@@ -705,6 +737,6 @@ class M_laporan extends CI_Model
 
     public function getBeritaKegiatan()
     {
-        return $this->db->query("SELECT * FROM berita_kegiatan ORDER BY id Desc LIMIT 12");
+        return $this->db->query('SELECT * FROM berita_kegiatan ORDER BY id Desc LIMIT 12');
     }
 }

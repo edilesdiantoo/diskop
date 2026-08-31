@@ -608,49 +608,6 @@ class AspirasiController extends CI_Controller
         // echo json_encode($data);
     }
 
-    public function getAspirasiByYears()
-    {
-        $kab = $this->session->userdata('kab');
-        $nama = $this->input->post('nama_search');
-        $tahun = $this->input->post('tahun_penerima');  // Get year input
-        $get_kategori = $this->input->post('get_kategori');
-        $kab_usaha = $this->input->post('kab_usaha');
-        $penerima = $this->input->post('penerima');
-
-        // If get_kategori is not provided, set to null (optional)
-        $get_kategori = $get_kategori ? $get_kategori : null;
-
-        // Call the model function to get the data
-        $data = [
-            'getDataPelakUsaha' => $this->AspirasiModel->getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun)->result(),
-        ];
-
-        // Return the data to the view
-        $this->load->view('Aspirasi/Ajax/showPelakuSearch', $data);
-    }
-
-    public function searchPelakuUsaha()
-    {
-        $kab = $this->input->post('kab_usaha');  // Get kab_usaha from the AJAX request
-        $nama = $this->input->post('nama_search');  // Get the search name
-        $tahun = $this->input->post('tahun_penerima');  // Get the year from the AJAX request
-
-        // Validate if the tahun and kab are provided
-        if (empty($tahun) || empty($kab)) {
-            echo json_encode(['error' => 'Tahun Penerima dan Kabupaten Usaha harus diinput']);
-
-            return;
-        }
-
-        // Call the model to fetch the filtered data
-        $data = [
-            'getDataPelakUsaha' => $this->AspirasiModel->getDataPelakUsaha($kab, $nama, $tahun)->result(),
-        ];
-
-        // Load the view with the data
-        $this->load->view('Aspirasi/Ajax/showPelakuSearch', $data);
-    }
-
     public function aspirasi2025()
     {
         $kab = $this->session->userdata('kab');
@@ -771,22 +728,63 @@ class AspirasiController extends CI_Controller
 
     // =========== get data berdasarkan tahun yang dipilih=============//
 
-    // =============sesui dengan tahun yang dipilih===================//
+    public function searchPelakuUsaha()
+    {
+        $kab = $this->input->post('kab_usaha');       // Get kab_usaha from the AJAX request
+        $nama = $this->input->post('nama_search');     // Get the search name
+        $tahun = $this->input->post('tahun_penerima');  // Get the year from the AJAX request
+        $jenis_bantuan = $this->input->post('jenis_bantuan');   // Tambahan: Jenis Bantuan
+
+        // Validate if the tahun and kab are provided
+        if (empty($tahun) || empty($kab)) {
+            echo json_encode(['error' => 'Tahun Penerima dan Kabupaten Usaha harus diinput']);
+
+            return;
+        }
+
+        // Call the model to fetch the filtered data
+        $data = [
+            'getDataPelakUsaha' => $this->AspirasiModel->getDataPelakUsaha($kab, $nama, $tahun, $jenis_bantuan)->result(),
+        ];
+
+        // Load the view with the data
+        $this->load->view('Aspirasi/Ajax/showPelakuSearch', $data);
+    }
 
     public function searchPelakuUsahaLevelUserByYear()
     {
-        $tahun_penerima = $this->input->post('tahun_penerima'); // Ambil tahun yang dipilih dari form
+        $tahun_penerima = $this->input->post('tahun_penerima');
+        $jenis_bantuan = $this->input->post('jenis_bantuan'); // Ambil jika dikirim
 
-        // Jika tahun tidak kosong
         if ($tahun_penerima) {
             $data = [
-                'getDataPelakUsaha' => $this->AspirasiModel->getDataPelakuUsahaByYear($tahun_penerima)->result(),
+                'getDataPelakUsaha' => $this->AspirasiModel->getDataPelakuUsahaByYear($tahun_penerima, $jenis_bantuan)->result(),
             ];
 
             $this->load->view('Aspirasi/Ajax/showPelakuSearch', $data);
         } else {
-            // Jika tahun kosong, kembalikan error atau tampilkan data kosong
             echo 'Tahun tidak valid!';
         }
+    }
+
+    public function getAspirasiByYears()
+    {
+        $kab = $this->session->userdata('kab');
+        $nama = $this->input->post('nama_search');
+        $tahun = $this->input->post('tahun_penerima');
+        $get_kategori = $this->input->post('get_kategori');
+        $kab_usaha = $this->input->post('kab_usaha');
+        $penerima = $this->input->post('penerima');
+        $jenis_bantuan = $this->input->post('jenis_bantuan');
+
+        // Gunakan pengecekan strlen / strict comparison agar nilai '0' tetap lolos
+        $get_kategori = (isset($get_kategori) && $get_kategori !== '') ? $get_kategori : null;
+        $jenis_bantuan = (isset($jenis_bantuan) && $jenis_bantuan !== '') ? $jenis_bantuan : null;
+
+        $data = [
+            'getDataPelakUsaha' => $this->AspirasiModel->getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun, $jenis_bantuan)->result(),
+        ];
+
+        $this->load->view('Aspirasi/Ajax/showPelakuSearch', $data);
     }
 }

@@ -1,13 +1,15 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_transaksi extends CI_Model
 {
-
     public function cekNoKK($nokk)
     {
         $this->db->select('kk', 'tgl_input', 'nib_sku_iumk', 'no_urut');
         $this->db->from('pelaku_usaha');
         $this->db->where('kk', $nokk);
+
         return $query = $this->db->get();
     }
 
@@ -17,6 +19,7 @@ class M_transaksi extends CI_Model
         (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk and kab_usaha = '$kab') as kk2 
         FROM pelaku_usaha as a where a.kab_usaha = '$kab' AND a.kk = '$nokk'
         ");
+
         return $query->row();
     }
 
@@ -24,6 +27,7 @@ class M_transaksi extends CI_Model
     {
         // return $this->db->get('kategori_dumisake');
         $this->db->where('aktive', 1);
+
         return $this->db->get('kategori_dumisake');
     }
 
@@ -42,6 +46,7 @@ class M_transaksi extends CI_Model
         $this->db->select('*');
         $this->db->from('provinces');
         $this->db->where('id', '15');
+
         return $query = $this->db->get();
     }
 
@@ -50,6 +55,7 @@ class M_transaksi extends CI_Model
         $this->db->select('*');
         $this->db->from('regencies');
         $this->db->where('province_id', $prov);
+
         return $query = $this->db->get();
     }
 
@@ -58,6 +64,7 @@ class M_transaksi extends CI_Model
         $this->db->select('*');
         $this->db->from('districts');
         $this->db->where('regency_id', $kab);
+
         return $query = $this->db->get();
     }
 
@@ -66,6 +73,7 @@ class M_transaksi extends CI_Model
         $this->db->select('*');
         $this->db->from('villages');
         $this->db->where('district_id', $kec);
+
         return $query = $this->db->get();
     }
 
@@ -74,6 +82,7 @@ class M_transaksi extends CI_Model
         $this->db->select('isi');
         $this->db->from('dumisake');
         $this->db->where('id_kategori_dumisake', $id_kategori_dumisake);
+
         return $query = $this->db->get()->result();
     }
 
@@ -89,6 +98,7 @@ class M_transaksi extends CI_Model
     {
         $this->db->where('id_pelaku_usaha', $id_pelaku_usaha);
         $this->db->update('pelaku_usaha', $no_urut);
+
         return ($this->db->affected_rows() != 1) ? false : true;
     }
 
@@ -106,13 +116,29 @@ class M_transaksi extends CI_Model
 
     public function getPelakuUsahaData($kk)
     {
-        $query = $this->db->query("SELECT a.kk, a.nik, a.id_kategori_dumisake, a.tgl_lahir, a.nama_lengkap, a.kab_usaha, a.kec_usaha, a.no_urut, b.nama, c.name as kab_usaha, d.name as kec_usaha 
+        $query = $this->db->query("SELECT 
+            a.kk, 
+            a.nik, 
+            a.id_kategori_dumisake, 
+            a.tgl_lahir, 
+            a.nama_lengkap, 
+            a.no_urut, 
+            a.jenis_bantuan,
+            a.tgl_input,
+            b.nama, 
+            c.name as kab_usaha, 
+            d.name as kec_usaha,
+            (SELECT kk FROM penerima_2023 WHERE kk = a.kk LIMIT 1) AS kk_penerima_2023,
+            (SELECT kk FROM penerima_2024 WHERE kk = a.kk LIMIT 1) AS kk_penerima_2024
         FROM pelaku_usaha as a
         LEFT OUTER JOIN kategori_dumisake AS b ON a.id_kategori_dumisake = b.id_kategori_dumisake
         LEFT OUTER JOIN regencies AS c ON a.kab_usaha = c.id
         LEFT OUTER JOIN districts AS d ON a.kec_usaha = d.id
         WHERE a.kk = '$kk'
-        ");
+        ORDER BY a.tgl_input DESC
+        LIMIT 1
+    ");
+
         return $query->row();
     }
 
@@ -120,8 +146,8 @@ class M_transaksi extends CI_Model
     {
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $where_aksi = "AND a.aksi = 1 AND";
-        } else if ($level == 3) {
+            $where_aksi = 'AND a.aksi = 1 AND';
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' AND a.aksi = 1 AND";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab' AND";
@@ -130,6 +156,7 @@ class M_transaksi extends CI_Model
         (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) as kk2  
         FROM pelaku_usaha as a 
         where a.id_pelaku_usaha  $where_aksi  LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%' or a.no_urut like '%$nama%' or kk like '%$nama%' limit 10");
+
         return $query;
     }
 
@@ -137,8 +164,8 @@ class M_transaksi extends CI_Model
     {
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $where_aksi = "AND a.aksi = 1 AND";
-        } else if ($level == 3) {
+            $where_aksi = 'AND a.aksi = 1 AND';
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' AND a.aksi = 1 AND";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab' AND";
@@ -147,6 +174,7 @@ class M_transaksi extends CI_Model
         (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) as kk2  
         FROM pelaku_usaha as a 
         where a.id_pelaku_usaha and  (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024)  $where_aksi  LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%' or a.no_urut like '%$nama%' or kk like '%$nama%' limit 10");
+
         return $query;
     }
 
@@ -154,8 +182,8 @@ class M_transaksi extends CI_Model
     {
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $where_aksi = "AND a.aksi = 1";
-        } else if ($level == 3) {
+            $where_aksi = 'AND a.aksi = 1';
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' AND a.aksi = 1";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab'";
@@ -164,29 +192,28 @@ class M_transaksi extends CI_Model
         if ($nama) {
             $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%'";
         } else {
-            $like_val = "";
+            $like_val = '';
         }
 
         if ($get_kategori) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         } else {
-            $kategori_ada = "";
+            $kategori_ada = '';
         }
-
 
         $query = $this->db->query("SELECT a.*
         FROM pelaku_usaha as a 
         where a.kk not in (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) $where_aksi $kategori_ada $like_val limit 100");
+
         return $query;
     }
-
 
     public function getDataPelakUsahaLevelUser2024($kab, $nama, $get_kategori)
     {
         $level = $this->session->userdata('level_user');
         if ($level == 1) {
-            $where_aksi = "AND a.aksi = 1";
-        } else if ($level == 3) {
+            $where_aksi = 'AND a.aksi = 1';
+        } elseif ($level == 3) {
             $where_aksi = "AND a.kab_usaha = '$kab' AND a.aksi = 1";
         } else {
             $where_aksi = "AND a.kab_usaha = '$kab'";
@@ -195,22 +222,21 @@ class M_transaksi extends CI_Model
         if ($nama) {
             $like_val = "AND LOWER(REPLACE(a.nama_lengkap,' ','')) like '%$nama%'";
         } else {
-            $like_val = "";
+            $like_val = '';
         }
 
         if ($get_kategori) {
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         } else {
-            $kategori_ada = "";
+            $kategori_ada = '';
         }
-
 
         $query = $this->db->query("SELECT a.*
         FROM pelaku_usaha as a 
         where a.kk not in (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk) and  (year(a.tgl_input) = 2024 OR year(a.tgl_edit) = 2024) $where_aksi $kategori_ada $like_val  limit 100");
+
         return $query;
     }
-
 
     public function getDataPenerima($kk)
     {
@@ -228,6 +254,7 @@ class M_transaksi extends CI_Model
             LEFT OUTER JOIN sektor_usaha AS g ON a.sektor_usaha = g.id_sektor_usaha
             WHERE a.kk = '$kk'
             ");
+
         return $query->result();
     }
 }

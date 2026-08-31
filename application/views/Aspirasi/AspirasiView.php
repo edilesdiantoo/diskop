@@ -24,7 +24,7 @@
 
         ?>
                     <!-- Tahun Penerima (Selalu Tampil) -->
-                    <div class="col-12">
+                    <div class="col-6">
                         <div class="input-group mb-3">
                             <select class="form-control getTahunPenerima" id="tahun_penerima">
                                 <option value="">-Tahun Penerima-</option>
@@ -32,6 +32,18 @@
                                 <option value="2024">2024</option>
                                 <option value="2025">2025</option>
                                 <option value="2026">2026</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tambahan: Jenis Bantuan / Usaha (Selalu Tampil) -->
+                    <div class="col-6">
+                        <div class="input-group mb-3">
+                            <select class="form-control level_satu" id="jenis_bantuan">
+                                <option value="">-Semua Jenis Bantuan-</option>
+                                <option value="0">Bantuan Modal</option>
+                                <option value="1">Bantuan Gerobak</option>
+                                <option value="2">Bantuan Gerobak Listrik</option>
                             </select>
                         </div>
                     </div>
@@ -246,99 +258,93 @@
     typingEffect();
 
     $(document).ready(function() {
-        $('.level_satu').on('input', function() {
+        // 1. Filter Dropdown (Kategori, Kab, Penerima, Jenis Bantuan)
+        $('.level_satu').on('input change', function() {
             console.log('years');
             
-            const get_kategori = $("#get_kategori").val();        // Get category selected
-            const kab_usaha = $("#kab_usaha").val();              // Get kab_usaha selected
-            const penerima = $("#penerima").val();                // Get penerima selected
-            const tahun_penerima = $("#tahun_penerima").val();    // Get tahun_penerima from the input field
+            const get_kategori   = $("#get_kategori").val();
+            const kab_usaha      = $("#kab_usaha").val();
+            const penerima       = $("#penerima").val();
+            const tahun_penerima = $("#tahun_penerima").val();
+            const jenis_bantuan  = $("#jenis_bantuan").val();
             console.log(kab_usaha);
-            
 
-            // Check if the year is selected, if not, show an alert and return
             if (tahun_penerima === "") {
-                alert("Tahun Penerima harus diinput"); // Alert message if the year is not selected
-                return; // Stop further execution
+                alert("Tahun Penerima harus diinput");
+                return;
             }
 
-            // Set the URL to the controller method (no need for conditional check)
             var url = '<?= site_url() ?>AspirasiController/getAspirasiByYears';
 
-            // Send the data via AJAX to the controller
             $.ajax({
-                url: url,                          // Always use the same URL
+                url: url,
                 type: 'POST',
                 data: {
                     penerima: penerima,
                     kab_usaha: kab_usaha,
-                    nama_search: $("#nama_search").val(),  // Assuming you have a field for nama_search
+                    nama_search: $("#search").val(),
                     get_kategori: get_kategori,
-                    tahun_penerima: tahun_penerima    // Pass the selected year
+                    tahun_penerima: tahun_penerima,
+                    jenis_bantuan: jenis_bantuan
                 },
                 success: function(data) {
-                    // On success, populate the results in the target div
                     $('#pelakuUsahaSearch').html(data);
                 },
                 error: function(xhr, status, error) {
-                    // Handle any error that occurs during the AJAX request
                     console.error("Error: " + error);
                 }
             });
         });
 
-
+        // 2. Filter Ganti Tahun
         $('.getTahunPenerima').on('change', function() {
-            const tahun_penerima = $("#tahun_penerima").val(); // Ambil tahun yang dipilih
+            const tahun_penerima = $("#tahun_penerima").val();
 
             $.ajax({
-                url: 'AspirasiController/searchPelakuUsahaLevelUserByYear', // Ganti dengan URL controller yang sesuai
+                url: '<?= site_url() ?>AspirasiController/searchPelakuUsahaLevelUserByYear',
                 type: 'POST',
                 data: {
                     tahun_penerima: tahun_penerima,
                 },
                 success: function(data) {
-                // console.log(data);
-                    
-                    $('#pelakuUsahaSearch').html(data); // Menampilkan hasil data yang diterima
-                    // $("#tahun_penerima")[0].selectedIndex = 0; // Mengatur dropdown ke pilihan pertama
-                    $("#get_kategori")[0].selectedIndex = 0; // Mengatur dropdown ke pilihan pertama
-                    $("#search")[0].selectedIndex = 0; // Mengatur dropdown ke pilihan pertama
-                    $("#kab_usaha")[0].selectedIndex = 0; // Mengatur dropdown ke pilihan pertama
-                    $("#penerima")[0].selectedIndex = 0; // Mengatur dropdown ke pilihan pertama
-
+                    $('#pelakuUsahaSearch').html(data);
+                    if ($("#get_kategori").length) $("#get_kategori")[0].selectedIndex = 0;
+                    if ($("#search").length) $("#search").val("");
+                    if ($("#kab_usaha").length && $("#kab_usaha").is("select")) $("#kab_usaha")[0].selectedIndex = 0;
+                    if ($("#penerima").length) $("#penerima")[0].selectedIndex = 0;
+                    if ($("#jenis_bantuan").length) $("#jenis_bantuan")[0].selectedIndex = 0;
                 }
             });
         });
 
+        // 3. Filter Search Ketik Nama
         $('.search').on('input', function() {
             const search = $("#search").val();
             const nama = search.replace(/ /g, "");
             const nama_search = nama.toLowerCase();
 
-            // Get values of tahun_penerima and kab_usaha
             const tahun_penerima = $("#tahun_penerima").val();
-            const kab_usaha = $("#kab_usaha").val();
+            const kab_usaha      = $("#kab_usaha").val();
+            const jenis_bantuan  = $("#jenis_bantuan").val();
 
-            // Check if tahun_penerima and kab_usaha are not empty
             if (tahun_penerima === "") {
                 alert("Tahun Penerima harus diinput");
-                return; // Stop the AJAX request if tahun_penerima is empty
+                return;
             }
 
             if (kab_usaha === "") {
                 alert("Kabupaten Usaha harus diinput");
-                return; // Stop the AJAX request if kab_usaha is empty
+                return;
             }
 
-            // Send the AJAX request if both are filled
             $.ajax({
                 url: '<?= site_url() ?>AspirasiController/searchPelakuUsaha',
                 type: 'POST',
                 data: {
                     nama_search: nama_search,
                     tahun_penerima: tahun_penerima,
-                    kab_usaha: kab_usaha
+                    kab_usaha: kab_usaha,
+                    jenis_bantuan: jenis_bantuan
                 },
                 success: function(data) {
                     $('#pelakuUsahaSearch').html(data);
@@ -346,35 +352,4 @@
             });
         });
     });
-
-    // function setInputFilter(textbox, inputFilter, errMsg) {
-    //     ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop", "focusout"].forEach(function(event) {
-    //         textbox.addEventListener(event, function(e) {
-    //             if (inputFilter(this.value)) {
-    //                 // Accepted value
-    //                 if (["keydown", "mousedown", "focusout"].indexOf(e.type) >= 0) {
-    //                     this.classList.remove("input-error");
-    //                     this.setCustomValidity("");
-    //                 }
-    //                 this.oldValue = this.value;
-    //                 this.oldSelectionStart = this.selectionStart;
-    //                 this.oldSelectionEnd = this.selectionEnd;
-    //             } else if (this.hasOwnProperty("oldValue")) {
-    //                 // Rejected value - restore the previous one
-    //                 this.classList.add("input-error");
-    //                 this.setCustomValidity(errMsg);
-    //                 this.reportValidity();
-    //                 this.value = this.oldValue;
-    //                 this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-    //             } else {
-    //                 // Rejected value - nothing to restore
-    //                 this.value = "";
-    //             }
-    //         });
-    //     });
-    // }
-
-    // // setInputFilter(document.getElementById("search"), function(value) {
-    // //     return /^-?\d*$/.test(value);
-    // // }, "NO URUT...!!!");
 </script>
