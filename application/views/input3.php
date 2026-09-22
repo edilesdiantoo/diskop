@@ -169,7 +169,7 @@
             <!-- <select class="form-select" name="prov_usaha" id="prov_usaha" required>
               <option value="">-Pilih Provinsi-</option>
               <?php foreach ($getProv as $key) {
-                echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
+                  echo "<option value='".$key->id."'>".$key->name.'</option>';
               } ?>
             </select> -->
           </div>
@@ -193,7 +193,7 @@
               <select class="form-select" id="sektor_usaha" name="sektor_usaha" required>
                 <option value="">-Pilih Sektor Usaha-</option>
                 <?php foreach ($get_sektor_usaha as $key) {
-                  echo '<option value="' . $key->id_sektor_usaha . '">' . $key->nama . '</option>';
+                    echo '<option value="'.$key->id_sektor_usaha.'">'.$key->nama.'</option>';
                 } ?>
               </select>
             </div>
@@ -210,6 +210,7 @@
         </div>
 
         <input type="hidden" name="id_kategori_dumisake" id="id_kategori_dumisake" value="<?= $id_kategori_dumisake ?>">
+        <input type="hidden" name="jenis_bantuan" id="jenis_bantuan" value="<?= $jenis_bantuan ?>">
         <input type="hidden" name="nama_lengkap" id="nama_lengkap" value="<?= $nama_lengkap ?>">
         <input type="hidden" name="nik" id="nik" value="<?= $nik ?>">
         <input type="hidden" name="kk" id="kk" value="<?= $kk ?>">

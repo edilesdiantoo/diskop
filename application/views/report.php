@@ -64,7 +64,7 @@ $tahun_pendaftaran = date('Y', strtotime($getPelakuUsahaData->tgl_input ?? date(
         <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #002B66; -webkit-text-stroke: 2.2px #002B66; letter-spacing: 0.8px;">
             <b><?= $status_judul ?></b>
         </div>
-        <div style="position: absolute; top: 0; left: 0; width: 100%; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #002B66; letter-spacing: 0.8px;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%;text-decoration: underline; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 900; color: #f10e19; letter-spacing: 0.8px;">
             <b><?= $status_judul ?></b>
         </div>
     </div>

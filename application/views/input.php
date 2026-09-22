@@ -162,15 +162,18 @@
   <div class="container">
     <div class="row pt-4">
       <div class="col">
+        <label class="form-label">Jenis Bantuan</label>
         <div class="mb-3">
-          <?php
-          $kategories_dumisake  = $this->M_transaksi->kategories_dumisake()->result();
-          ?>
+          <select class="form-select" name="jenis_bantuan" id="jenis_bantuan" required>
+            <option value="">-Pilih Jenis Bantuan-</option>
+            <option value="0">Bantuan Modal</option>
+            <option value="1">Bantuan Gerobak</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
           <select class="form-select" id="get_kategori" name="kategori_dumisake" required>
-            <option value="" style="">-Pilih Kategori-</option>
-            <?php foreach ($kategories_dumisake as $key => $value) {
-              echo '<option value="' . $value->id_kategori_dumisake . '">' . $value->nama . '</option>';
-            } ?>
+            <option value="">-Pilih Kategori-</option>
           </select>
         </div>
       </div>
@@ -219,7 +222,8 @@
     $("#Next").on('click', function() {
       progressBar.Next();
       const id_kategori_dumisake = $("#get_kategori").val();
-      window.location.href = "<?= site_url() ?>TransaksiController/input1/" + id_kategori_dumisake;
+      const jenis_bantuan = $("#jenis_bantuan").val();
+      window.location.href = "<?= site_url() ?>TransaksiController/input1/" + id_kategori_dumisake +'/'+jenis_bantuan;
     })
     $("#Back").on('click', function() {
       progressBar.Back();
@@ -242,6 +246,26 @@
           }
         });
       });
+    });
+
+    $('#jenis_bantuan').on('change', function() {
+      const jenis = $(this).val();
+      $('#resultKategori').html(''); // reset detail syarat
+      
+      if (jenis !== "") {
+        $.ajax({
+          type: "post",
+          url: "<?= site_url('TransaksiController/getKategoriByJenis') ?>",
+          data: {
+            jenis_bantuan: jenis
+          },
+          success: function(response) {
+            $('#get_kategori').html(response);
+          }
+        });
+      } else {
+        $('#get_kategori').html('<option value="">-Pilih Kategori-</option>');
+      }
     });
   </script>
 </body>

@@ -281,14 +281,6 @@
           <div class="mb-3">
             <div class="card cardx">
               <div class="card-body">
-                <label class="form-label">Jenis Bantuan</label>
-                <div class="mb-3">
-                  <select class="form-select" name="jenis_bantuan" id="jenis_bantuan" required>
-                    <option value="0">Bantuan Modal</option>
-                    <option value="1">Bantuan Gerobak</option>
-                    <option value="2">Bantuan Gerobak Listrik</option>
-                  </select>
-                </div>
                 <label class="form-label">Aspirasi</label>
                 <div class="mb-3">
                   <select class="form-select" name="kategori_pelaku_usaha" id="kategori_pelaku_usaha" required>
@@ -308,6 +300,7 @@
 
 
       <input type="hidden" name="id_kategori_dumisake" id="id_kategori_dumisake" value="<?= $id_kategori_dumisake ?>">
+      <input type="hidden" name="jenis_bantuan" id="jenis_bantuan" value="<?= $jenis_bantuan ?>">
       <input type="hidden" name="nama_lengkap" id="nama_lengkap" value="<?= $nama_lengkap ?>">
       <input type="hidden" name="nik" id="nik" value="<?= $nik ?>">
       <input type="hidden" name="kk" id="kk" value="<?= $kk ?>">
@@ -479,7 +472,7 @@
                   popup: 'animate__animated animate__fadeOutUp'
                 }
               }).then(function() {
-                window.location.href = "<?= site_url() ?>TransaksiController/bukti_pengajauan/" + kk;
+                window.open("<?= site_url('TransaksiController/bukti_pengajauan/') ?>" + kk, '_blank');
               });
             }, 3000);
 

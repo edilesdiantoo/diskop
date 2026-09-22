@@ -158,14 +158,9 @@
             <input type="text" class="form-control" placeholder="Alamat sesuai KTP khusus Provinsi Jambi" name="alamat" required>
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" id="" name="prov" value="<?= $getProvJambi->id ?>" readonly placeholder="Provinsi">
+            <input type="text" class="form-control" id="" name="prov" value="<?= $getProvJambi->name ?>" readonly placeholder="Provinsi">
             <input type="text" class="form-control" id="prov" hidden name="" value="<?= $getProvJambi->id ?>" readonly placeholder="Provinsi">
-            <!-- <select class="form-select" name="prov" id="prov" required > -->
-            <!-- <option value="">-Pilih Provinsi-</option> -->
-            <!-- <?php foreach ($getProvJambi as $key) {
-                    echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
-                  } ?>
-            </select> -->
+            
           </div>
           <div class="mb-3">
             <select class="form-select" name="kab" id="kab" required>
@@ -186,6 +181,7 @@
           </div>
         </div>
         <input type="hidden" name="id_kategori_dumisake" id="id_kategori_dumisake" value="<?= $id_kategori_dumisake ?>">
+        <input type="hidden" name="jenis_bantuan" id="jenis_bantuan" value="<?= $jenis_bantuan ?>">
         <input type="hidden" name="nama_lengkap" id="nama_lengkap" value="<?= $nama_lengkap ?>">
         <input type="hidden" name="nik" id="nik" value="<?= $nik ?>">
         <input type="hidden" name="kk" id="kk" value="<?= $kk ?>">

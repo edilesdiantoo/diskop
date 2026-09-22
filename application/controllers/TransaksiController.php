@@ -48,6 +48,23 @@ class TransaksiController extends CI_Controller
         }
     }
 
+    public function getKategoriByJenis()
+    {
+        $jenis_bantuan = $this->input->post('jenis_bantuan');
+
+        // Ambil data kategori yang aktif dan sesuai jenis_bantuan
+        $this->db->where('aktive', 1);
+        $this->db->where('Jenis_bantuan', $jenis_bantuan);
+        $kategori = $this->db->get('kategori_dumisake')->result();
+
+        $html = '<option value="">-Pilih Kategori-</option>';
+        foreach ($kategori as $row) {
+            $html .= '<option value="'.$row->id_kategori_dumisake.'">'.$row->nama.'</option>';
+        }
+
+        echo $html;
+    }
+
     public function getKategoriDumisake()
     {
         $data = [
@@ -58,12 +75,13 @@ class TransaksiController extends CI_Controller
         $this->load->view('Transaksi/Ajax/Kategori_dumisake', $data);
     }
 
-    public function input1($id_kategori_dumisake = null)
+    public function input1($id_kategori_dumisake = null, $jenis_bantuan = null)
     {
         // echo json_encode("1");
         // echo $value;
         $data = [
             'id_kategori_dumisake' => $id_kategori_dumisake,
+            'jenis_bantuan' => $jenis_bantuan,
             'get_sektor_usaha' => $this->M_transaksi->get_sektor_usaha()->result(),
         ];
         if ($id_kategori_dumisake) {
@@ -77,6 +95,7 @@ class TransaksiController extends CI_Controller
     {
         $data = [
             'id_kategori_dumisake' => $this->input->post('id_kategori_dumisake'),
+            'jenis_bantuan' => $this->input->post('jenis_bantuan'),
             'nama_lengkap' => $this->input->post('nama_lengkap'),
             'nik' => $this->input->post('nik'),
             'kk' => $this->input->post('kk'),
@@ -154,6 +173,7 @@ class TransaksiController extends CI_Controller
         $data = [
             // input 1
             'id_kategori_dumisake' => $this->input->post('id_kategori_dumisake'),
+            'jenis_bantuan' => $this->input->post('jenis_bantuan'),
             'nama_lengkap' => $this->input->post('nama_lengkap'),
             'nik' => $this->input->post('nik'),
             'kk' => $this->input->post('kk'),
@@ -185,6 +205,7 @@ class TransaksiController extends CI_Controller
         $data = [
             // input 1
             'id_kategori_dumisake' => $this->input->post('id_kategori_dumisake'),
+            'jenis_bantuan' => $this->input->post('jenis_bantuan'),
             'nama_lengkap' => $this->input->post('nama_lengkap'),
             'nik' => $this->input->post('nik'),
             'kk' => $this->input->post('kk'),

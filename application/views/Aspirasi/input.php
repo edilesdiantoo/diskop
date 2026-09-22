@@ -164,12 +164,12 @@
       <div class="col">
         <div class="mb-3">
           <?php
-          $kategories_dumisake  = $this->M_transaksi->kategories_dumisake()->result();
+          $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
           ?>
           <select class="form-select" id="get_kategori" name="kategori_dumisake" required>
             <option value="" style="">-Pilih Kategori-</option>
             <?php foreach ($kategories_dumisake as $key => $value) {
-              echo '<option value="' . $value->id_kategori_dumisake . '">' . $value->nama . '</option>';
+                echo '<option value="'.$value->id_kategori_dumisake.'">'.$value->nama.'</option>';
             } ?>
           </select>
         </div>

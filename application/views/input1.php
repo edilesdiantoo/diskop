@@ -156,6 +156,7 @@
         <div class="col">
           <div class="mb-3">
             <input type="hidden" name="id_kategori_dumisake" id="id_kategori_dumisake" value="<?= $id_kategori_dumisake ?>">
+            <input type="hidden" name="jenis_bantuan" id="jenis_bantuan" value="<?= $jenis_bantuan ?>">
             <input type="text" class="form-control" placeholder="Nama lengkap" name="nama_lengkap" id="nama_lengkap">
           </div>
           <div class="mb-3">
