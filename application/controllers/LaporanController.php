@@ -242,10 +242,15 @@ class LaporanController extends CI_Controller
     public function rekapRekomendasi2024()
     {
         $kab = $this->session->userdata('kab');
+
+        // Set default tahun saat halaman pertama kali di-load
+        $tahun_default = 2026; // Ubah ke 2026 jika ingin default-nya 2026
+
         $data = [
-            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi2024($kab)->result(),
+            // Tambahkan variabel $tahun_default sebagai parameter kedua
+            'TotalCalonPenerimaAspirasi' => $this->M_laporan->TotalCalonPenerimaAspirasi2024($kab, $tahun_default)->result(),
         ];
-        // echo $kab;
+
         $this->template->display('Aspirasi/Monitoring/rekapRekomendasi2024', $data);
     }
 
@@ -346,34 +351,6 @@ class LaporanController extends CI_Controller
         }
     }
 
-    // public function pdfRekomendasi2024()
-    // {
-    //     $tahun    = $this->input->post('tahun');
-    //     $kab    = $this->input->post('kab');
-    //     $kec    = $this->input->post('kec');
-    //     $kel    = $this->input->post('kel');
-    //     $level  = $this->session->userdata('level_user');
-    //     $status = $this->input->post('status');
-    //     $format = $this->input->post('format');
-    //     // strip out all whitespace
-    //     $rekomen_dari = $this->input->post('rekomendasi');
-    //     $zname_clean  = preg_replace('/\s*/', '', $rekomen_dari);
-    //     // convert the string to all lowercase
-    //     $zname_clean_lower = strtolower($zname_clean);
-
-    //     $rekomendasi               = $zname_clean_lower;
-    //     $data['getpdfRekomendasi'] = $this->M_laporan->getpdfRekomendasi2024($kab, $kec, $kel, $status, $level, $rekomendasi)->result();
-    //     $data['tahun'] = 2024;
-    //     print_r($data['getpdfRekomendasi']);
-    //     // // print_r($data['getpdfRekomendasi']);
-
-    //     if ($format == '2') {
-    //         $this->load->view('Aspirasi/Monitoring/ExcelRekomendasi', $data);
-    //     } else {
-    //         $this->load->view('Aspirasi/Monitoring/pdfRekomendasi', $data);
-    //     }
-    // }
-
     public function pdfRekomendasi2024()
     {
         $tahun = $this->input->post('tahun');
@@ -383,6 +360,7 @@ class LaporanController extends CI_Controller
         $level = $this->session->userdata('level_user');
         $status = $this->input->post('status');
         $format = $this->input->post('format');
+        $jenis_bantuan = $this->input->post('jenis_bantuan'); // <-- 1. Ambil input jenis bantuan dari form
 
         // Strip out all whitespace and make it lowercase
         $rekomen_dari = $this->input->post('rekomendasi');
@@ -391,15 +369,13 @@ class LaporanController extends CI_Controller
         $rekomendasi = $zname_clean_lower;
 
         // Handle empty kec and kel to allow all values if they're empty
-        $kec = $kec ? $kec : ''; // If kec is empty, set it to an empty string
-        $kel = $kel ? $kel : ''; // If kel is empty, set it to an empty string
+        $kec = $kec ? $kec : '';
+        $kel = $kel ? $kel : '';
 
-        // Fetch data using the model
-        $data['getpdfRekomendasi'] = $this->M_laporan->getpdfRekomendasiByYears($kab, $kec, $kel, $status, $level, $rekomendasi, $tahun)->result();
+        // Fetch data using the model (Kirimkan $jenis_bantuan sebagai parameter ke-8)
+        $data['getpdfRekomendasi'] = $this->M_laporan->getpdfRekomendasiByYears($kab, $kec, $kel, $status, $level, $rekomendasi, $tahun, $jenis_bantuan)->result();
         $data['tahun'] = $tahun;
-
-        // Uncomment to debug the fetched data
-        // print_r($data['getpdfRekomendasi']);
+        $data['jenis_bantuan'] = $jenis_bantuan;
 
         // Load the correct view depending on the format
         if ($format == '2') {

@@ -18,18 +18,18 @@
 
                 <?php
                 $kab = $this->session->userdata('kab');
-                $level = $this->session->userdata('level_user');
-                if ($level != 1) {
-                    foreach ($GetKab as $key) {
-                        if ($kab == $key->id) {
-                            echo "<option value='" . $key->id . "' selected>" . $key->name . "</option>";
-                        }
-                    }
-                } else {
-                    foreach ($GetKab as $key) {
-                        echo "<option value='" . $key->id . "'>" . $key->name . "</option>";
-                    }
-                } ?>
+    $level = $this->session->userdata('level_user');
+    if ($level != 1) {
+        foreach ($GetKab as $key) {
+            if ($kab == $key->id) {
+                echo "<option value='".$key->id."' selected>".$key->name.'</option>';
+            }
+        }
+    } else {
+        foreach ($GetKab as $key) {
+            echo "<option value='".$key->id."'>".$key->name.'</option>';
+        }
+    } ?>
             </select>
             <select class="form-control  mr-3" id="kec" name="kec">
                 <option value="">Pilih KEC.</option>
@@ -43,27 +43,22 @@
                 <div id="suggesstion-box2"></div>
             </div>
 
+<select class="form-control mr-2" id="jenis_bantuan" name="jenis_bantuan">
+    <option value="">- SEMUA JENIS BANTUAN -</option>
+    <option value="0">Bantuan Modal</option>
+    <option value="1">Bantuan Gerobak</option>
+    <option value="2">Bantuan Gerobak Listrik</option>
+</select>
 
             <select class="form-control mr-2" id="status" name="status" required>
-                <option value="">PILIH STATUS</option>
-                <?php
-                // echo '<option value="1">Belum Verify Kabid</option>';
-                echo '<option value="2">Penerima Aspirasi</option>';
-                // echo '<option value="3">Tidak Memenuhi Syarat</option>';
-                echo '<option value="0">Tidak Layak</option>';
-                ?>
-                <!-- <?php if ($level != '3') {
-                            echo '<option value="1">Setuju Kab</option>';
-                            echo '<option value="0">Tolak Kab</option>';
-                        } else {
-                            echo '<option value="1">Setuju Prov</option>';
-                            echo '<option value="0">Tolak Prov</option>';
-                        }
-                        ?> -->
-            </select>
+    <option value="">PILIH STATUS</option>
+    <option value="2">Penerima Aspirasi</option>
+    <option value="0">Tidak Layak</option>
+</select>
+
             <?php
             $level = $this->session->userdata('level_user');
-            if ($level == '1') { ?>
+    if ($level == '1') { ?>
                 <select class="form-control mr-2" id="format" name="format" required>
                     <option value="">FORMAT LAPORAN</option>
                     <option value="1">PDF</option>

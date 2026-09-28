@@ -11,8 +11,8 @@ $options->set('isPhpEnabled', 'true');
 $dompdf = new Dompdf($options);
 define('DOMPDF_FONT_HEIGHT_RATIO', 0.75);
 // ini_set('memory_limit', '55M');
-ini_set('memory_limit', '800M');
-ini_set('max_execution_time', '800');
+ini_set('memory_limit', '-1');
+ini_set('max_execution_time', '3600'); // Perpanjang waktu eksekusi jadi 1 jam
 ?>
 <html>
 

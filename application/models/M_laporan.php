@@ -340,20 +340,48 @@ class M_laporan extends CI_Model
         return $query;
     }
 
-    public function TotalCalonPenerimaAspirasi($kab)
+    public function TotalCalonPenerimaAspirasi($kab, $tahun, $jenis_bantuan = null)
     {
-        $query = $this->db->query("SELECT COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
-        a.kab_usaha, a.rekomendasi_dari,		
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 1 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as mil_20,			
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 2 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as mil_10,			
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 3 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as mak_10,			
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 4 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as mak_5,			
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 5 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as wp_10,			
-        (SELECT COUNT(b.id_kategori_dumisake) as hitung FROM pelaku_usaha as b WHERE b.kab_usaha = a.kab_usaha and b.kategori_pelaku_usaha is not null and b.rekomendasi_dari = a.rekomendasi_dari and b.id_kategori_dumisake = 6 AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake !='') AND b.aksi_akhir IS NULL GROUP BY b.id_kategori_dumisake) as wp_5			
-        FROM pelaku_usaha as a WHERE a.kab_usaha = '$kab' and a.kategori_pelaku_usaha =1  AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') and a.aksi_akhir IS NULL
-        GROUP BY a.rekomendasi_dari;");
+        // Dasar query menggunakan Query Builder agar lebih aman dan mudah dibaca
+        $this->db->select('
+        a.rekomendasi_dari,
+        COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
+        
+        -- Kategori Bantuan Modal (Jenis Bantuan 0)
+        SUM(CASE WHEN a.id_kategori_dumisake = 7 THEN 1 ELSE 0 END) as mil_5,
+        SUM(CASE WHEN a.id_kategori_dumisake = 1 THEN 1 ELSE 0 END) as mil_20,
+        SUM(CASE WHEN a.id_kategori_dumisake = 2 THEN 1 ELSE 0 END) as mil_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 3 THEN 1 ELSE 0 END) as mak_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 4 THEN 1 ELSE 0 END) as mak_5,
+        SUM(CASE WHEN a.id_kategori_dumisake = 5 THEN 1 ELSE 0 END) as wp_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 6 THEN 1 ELSE 0 END) as wp_5,
+        
+        -- Kategori Bantuan Gerobak (Jenis Bantuan 1)
+        SUM(CASE WHEN a.id_kategori_dumisake = 8 THEN 1 ELSE 0 END) as gerobak_makanan,
+        SUM(CASE WHEN a.id_kategori_dumisake = 9 THEN 1 ELSE 0 END) as gerobak_bakso,
+        SUM(CASE WHEN a.id_kategori_dumisake = 10 THEN 1 ELSE 0 END) as gerobak_minuman
+    ');
 
-        return $query;
+        $this->db->from('pelaku_usaha as a');
+        $this->db->where('a.kab_usaha', $kab);
+        $this->db->where('a.kategori_pelaku_usaha', 1);
+        $this->db->where('a.id_kategori_dumisake IS NOT NULL');
+        $this->db->where('a.id_kategori_dumisake !=', '');
+
+        // Filter Tahun
+        $this->db->group_start();
+        $this->db->where('YEAR(a.tgl_input)', $tahun);
+        $this->db->or_where('YEAR(a.tgl_edit)', $tahun);
+        $this->db->group_end();
+
+        // Filter Jenis Bantuan (jika dipilih di dropdown)
+        if ($jenis_bantuan != '') {
+            $this->db->where('a.jenis_bantuan', $jenis_bantuan);
+        }
+
+        $this->db->group_by('a.rekomendasi_dari');
+
+        return $this->db->get();
     }
 
     public function TotalCalonPenerimaAspirasi2024($kab)
@@ -375,109 +403,45 @@ class M_laporan extends CI_Model
 
     public function getByYearsKab($tahun, $kab, $jenis_bantuan = null)
     {
-        // Filter jenis bantuan untuk subquery (b) dan main query (a)
-        $bantuan_where_b = '';
-        $bantuan_where_a = '';
+        $this->db->select('
+        a.rekomendasi_dari,
+        COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
+        
+        -- Kategori Bantuan Modal (2023 & 2024+)
+        SUM(CASE WHEN a.id_kategori_dumisake = 1 THEN 1 ELSE 0 END) as mil_20,
+        SUM(CASE WHEN a.id_kategori_dumisake = 2 THEN 1 ELSE 0 END) as mil_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 3 THEN 1 ELSE 0 END) as mak_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 4 THEN 1 ELSE 0 END) as mak_5,
+        SUM(CASE WHEN a.id_kategori_dumisake = 5 THEN 1 ELSE 0 END) as wp_10,
+        SUM(CASE WHEN a.id_kategori_dumisake = 6 THEN 1 ELSE 0 END) as wp_5,
+        SUM(CASE WHEN a.id_kategori_dumisake = 7 THEN 1 ELSE 0 END) as mil_5,
+        
+        -- Kategori Bantuan Gerobak
+        SUM(CASE WHEN a.id_kategori_dumisake = 8 THEN 1 ELSE 0 END) as gerobak_makanan,
+        SUM(CASE WHEN a.id_kategori_dumisake = 9 THEN 1 ELSE 0 END) as gerobak_bakso,
+        SUM(CASE WHEN a.id_kategori_dumisake = 10 THEN 1 ELSE 0 END) as gerobak_minuman
+    ');
+
+        $this->db->from('pelaku_usaha as a');
+        $this->db->where('a.kab_usaha', $kab);
+        $this->db->where('a.kategori_pelaku_usaha', 1);
+        $this->db->where('a.id_kategori_dumisake IS NOT NULL');
+        $this->db->where('a.id_kategori_dumisake !=', '');
+
+        // Filter Tahun
+        $this->db->group_start();
+        $this->db->where('YEAR(a.tgl_input)', $tahun);
+        $this->db->or_where('YEAR(a.tgl_edit)', $tahun);
+        $this->db->group_end();
+
+        // Filter Jenis Bantuan (0 = Modal, 1 = Gerobak)
         if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
-            $bantuan_where_b = "AND b.jenis_bantuan = '$jenis_bantuan'";
-            $bantuan_where_a = "AND a.jenis_bantuan = '$jenis_bantuan'";
+            $this->db->where('a.jenis_bantuan', $jenis_bantuan);
         }
 
-        // Define the parameters to pass to the query
-        $params = [];
-        for ($i = 0; $i < 7; $i++) {
-            // Loop for each placeholder in the 7 subqueries
-            $params[] = $tahun;
-            $params[] = $tahun;
-        }
-        $params[] = $kab;   // For a.kab_usaha
-        $params[] = $tahun; // For main query YEAR(a.tgl_input)
-        $params[] = $tahun; // For main query YEAR(a.tgl_edit)
+        $this->db->group_by('a.rekomendasi_dari');
 
-        $query = $this->db->query("
-        SELECT 
-            COUNT(a.id_kategori_dumisake) as total_pelaku_usaha,
-            a.kab_usaha, a.rekomendasi_dari,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 7 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as mil_5,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 1 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as mil_20,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 2 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as mil_10,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 3 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as mak_10,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 4 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as mak_5,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 5 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as wp_10,
-            (SELECT COUNT(b.id_kategori_dumisake) as hitung 
-                FROM pelaku_usaha as b 
-                WHERE b.kab_usaha = a.kab_usaha 
-                    AND b.kategori_pelaku_usaha IS NOT NULL 
-                    AND b.rekomendasi_dari = a.rekomendasi_dari 
-                    AND b.id_kategori_dumisake = 6 
-                    AND (b.id_kategori_dumisake IS NOT NULL AND b.id_kategori_dumisake != '') 
-                    AND (YEAR(b.tgl_input) = ? OR YEAR(b.tgl_edit) = ?) 
-                    $bantuan_where_b
-                GROUP BY b.id_kategori_dumisake) as wp_5
-        FROM pelaku_usaha as a 
-        WHERE a.kab_usaha = ? 
-            AND a.kategori_pelaku_usaha = 1  
-            AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake != '') 
-            AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)
-            $bantuan_where_a
-        GROUP BY a.rekomendasi_dari;
-    ", $params);
-
-        return $query;
+        return $this->db->get();
     }
 
     public function TotalCalonPenerimaAspirasiBelumAccKabid($kab)
@@ -611,7 +575,7 @@ class M_laporan extends CI_Model
         return $query;
     }
 
-    public function getpdfRekomendasiByYears($kab, $kec, $kel, $status, $level, $rekomendasi, $tahun)
+    public function getpdfRekomendasiByYears($kab, $kec, $kel, $status, $level, $rekomendasi, $tahun, $jenis_bantuan = null)
     {
         if ($kab) {
             $wilayahKab = "AND a.kab_usaha = '$kab'";
@@ -645,6 +609,12 @@ class M_laporan extends CI_Model
             $status_flag = "AND a.aksi = '0'";
         }
 
+        // Filter jenis bantuan (Hanya aktif jika benar-benar dipilih di form)
+        $wilayahJenis = '';
+        if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
+            $wilayahJenis = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        }
+
         // Query with dynamic YEAR filtering based on selected year
         $query = $this->db->query("
         SELECT 
@@ -670,6 +640,7 @@ class M_laporan extends CI_Model
         $wilayahKab 
         $wilayahKec 
         $wilayahKel 
+        $wilayahJenis
         AND (a.id_kategori_dumisake IS NOT NULL AND a.id_kategori_dumisake !='') 
         AND a.kategori_pelaku_usaha = 1 
         AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?) 
