@@ -508,41 +508,6 @@ class VerifikasiController extends CI_Controller
             $foto_usaha = $this->input->post('foto_usaha_old');
         }
 
-        // if ($_FILES["file_kk"]["name"]) {
-        //     if ($this->input->post('file_kk_old')) {
-        //         unlink("uploads/KTP/" . $this->input->post('file_kk_old'));
-        //         $curtime = time();
-        //         $file_kk = "file_kk" . $curtime . str_replace(" ", "", $_FILES["file_kk"]["name"]);
-        //         $this->fcKK_method($file_kk, 'file_kk');
-        //     } else {
-        //         $curtime = time();
-        //         $file_kk = "file_kk" . $curtime . str_replace(" ", "", $_FILES["file_kk"]["name"]);
-        //         $this->fcKK_method($file_kk, 'file_kk');
-        //     }
-
-        //     unlink("uploads/KTP/" . $this->input->post('file_kk_old'));
-        //     $curtime = time();
-        //     $file_kk = "file_kk" . $curtime . str_replace(" ", "", $_FILES["file_kk"]["name"]);
-        //     $this->fcKK_method($file_kk, 'file_kk');
-        // } else {
-        //     $file_kk = $this->input->post('file_kk_old');
-        // }
-
-        // if ($_FILES["file_sertifikat_umkm"]["name"]) {
-        //     if ($this->input->post('file_sertifikat_umkm_old')) {
-        //         unlink("uploads/KTP/" . $this->input->post('file_sertifikat_umkm_old'));
-        //         $curtime              = time();
-        //         $file_sertifikat_umkm = "file_sertifikat_umkm" . $curtime . str_replace(" ", "", $_FILES["file_sertifikat_umkm"]["name"]);
-        //         $this->sertifikatUMKM_method($file_sertifikat_umkm, 'file_sertifikat_umkm');
-        //     } else {
-        //         $curtime              = time();
-        //         $file_sertifikat_umkm = "file_sertifikat_umkm" . $curtime . str_replace(" ", "", $_FILES["file_sertifikat_umkm"]["name"]);
-        //         $this->sertifikatUMKM_method($file_sertifikat_umkm, 'file_sertifikat_umkm');
-        //     }
-        // } else {
-        //     $file_sertifikat_umkm = $this->input->post('file_sertifikat_umkm_old');
-        // }
-
         $data = [
             'id_kategori_dumisake' => $this->input->post('id_kategori_dumisake'),
             'nama_lengkap' => $this->input->post('nama_lengkap'),

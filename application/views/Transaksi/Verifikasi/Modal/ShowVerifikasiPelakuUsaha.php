@@ -14,7 +14,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
-                        <h4 class="card-title">Data Pelaku Usaha</h4>
+                        <h4 class="card-title">Data Pelaku Usaha paginait</h4>
                         <p class="card-description">
                             Semua data pelaku usaha
                         </p>
@@ -23,16 +23,16 @@
                     <?php
                     $level_user = $this->session->userdata('level_user');
 
-                    if ($level_user == 1 || $level_user == 3) { ?>
+        if ($level_user == 1 || $level_user == 3) { ?>
                         <div class="col-3">
                             <div class="input-group mb-3">
                                 <select class="form-control level_satu" id="get_kategori">
                                     <option value="" style="">-Pilih Kategori-</option>
                                     <?php
-                                    $kategories_dumisake  = $this->M_transaksi->kategories_dumisake()->result();
-                                    foreach ($kategories_dumisake as $key => $value) {
-                                        echo '<option value="' . $value->id_kategori_dumisake . '">' . $value->nama . '</option>';
-                                    } ?>
+                        $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
+            foreach ($kategories_dumisake as $key => $value) {
+                echo '<option value="'.$value->id_kategori_dumisake.'">'.$value->nama.'</option>';
+            } ?>
                                 </select>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                 <tbody id="pelakuUsahaSearch">
                                     <?php $no = 1;
 
-                                    foreach ($getDataVerifikasiPelakuUsaha as $key) { ?>
+        foreach ($getDataVerifikasiPelakuUsaha as $key) { ?>
                                         <tr>
                                             <td><?= ++$start; ?></td>
                                             <td><?= $key->no_urut ?></td>
@@ -88,51 +88,51 @@
                                             <td><?= $key->jenis_usaha ?></td>
                                             <td>
                                                 <?php if ($key->titik_koordinat) {
-                                                    echo '<a href="https://maps.google.com/?q=' . $key->titik_koordinat . '">Lokasi Map</a>';
+                                                    echo '<a href="https://maps.google.com/?q='.$key->titik_koordinat.'">Lokasi Map</a>';
                                                 } else {
-                                                    echo "Tidak Ada";
+                                                    echo 'Tidak Ada';
                                                 }
-                                                ?>
+            ?>
                                             </td>
                                             <td>
                                                 <?php
-                                                if ($key->aksi == null) {
-                                                    echo "Belum di Verifikasi <br>";
-                                                } else if ($key->aksi == 0) {
-                                                    echo "Tidak Memenuhi Syarat <br>";
-                                                } else if ($key->aksi == 1 && $key->aksi_akhir == 0) {
-                                                    echo "Layak<br>";
-                                                } else if ($key->aksi_akhir == 1) {
-                                                    echo "<p style='color: red;'>Penerima Bantuan <br>";
-                                                }
-                                                if ($level_user == 1 || $level_user == 3) {
-                                                    if ($key->kk2) {
-                                                        echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                                    }
-                                                }
+            if ($key->aksi == null) {
+                echo 'Belum di Verifikasi <br>';
+            } elseif ($key->aksi == 0) {
+                echo 'Tidak Memenuhi Syarat <br>';
+            } elseif ($key->aksi == 1 && $key->aksi_akhir == 0) {
+                echo 'Layak<br>';
+            } elseif ($key->aksi_akhir == 1) {
+                echo "<p style='color: red;'>Penerima Bantuan <br>";
+            }
+            if ($level_user == 1 || $level_user == 3) {
+                if ($key->kk2) {
+                    echo "<p style='color: red;'>Pernah Menerima Bantuan";
+                }
+            }
 
-                                                ?>
-                                            </td>
+            ?>
+                                            </td>  
 
                                             <td style="text-align: center;">
                                                 <?php
-                                                if ($key->aksi == 1 && $level_user == 1 && @$aksi_akhir != 1) { ?>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhir/' . $key->id_pelaku_usaha) ?>" type="button" class="btn btn-outline-warning btn-xs">Detail</a><br>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/' . $key->id_pelaku_usaha . '/' . '1') ?>" type="button" class="btn btn-outline-success mt-1 btn-xs">Setuju</a><br>
-                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/' . $key->id_pelaku_usaha . '/' . '0') ?>" type="button" class="btn btn-outline-danger mt-1 btn-xs">Tolak</a>
+            if ($key->aksi == 1 && $level_user == 1 && @$aksi_akhir != 1) { ?>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhir/'.$key->id_pelaku_usaha) ?>" type="button" class="btn btn-outline-warning btn-xs">Detail</a><br>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'1') ?>" type="button" class="btn btn-outline-success mt-1 btn-xs">Setuju</a><br>
+                                                    <a href="<?= base_url('VerifikasiController/VerifikasiAkhirFinal/'.$key->id_pelaku_usaha.'/'.'0') ?>" type="button" class="btn btn-outline-danger mt-1 btn-xs">Tolak</a>
                                                     <?php } else {
-                                                    if ($key->kk2) {
-                                                        echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                                    } else { ?>
+                                                        if ($key->kk2) {
+                                                            echo "<p style='color: red;'>Pernah Menerima Bantuan";
+                                                        } else { ?>
 
                                                         <!-- <a type="button">Maintenence</a> -->
                                                         <?php
-                                                        $uri = $this->uri->segment('1');
-                                                        $uri2 = $this->uri->segment('2');
-                                                        ?>
-                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/' . $key->id_pelaku_usaha . '/' . $uri . '/' . $uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Prosses Verifikasi</a>
+                                                            $uri = $this->uri->segment('1');
+                                                            $uri2 = $this->uri->segment('2');
+                                                            ?>
+                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Prosses Verifikasi</a>
                                                 <?php }
-                                                } ?>
+                                                        } ?>
                                             </td>
                                         </tr>
                                     <?php } ?>

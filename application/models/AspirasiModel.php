@@ -225,9 +225,11 @@ class AspirasiModel extends CI_Model
         return $query;
     }
 
-    public function getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun = null, $jenis_bantuan = null)
+    // 1. Fungsi untuk GET Data
+    public function getAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun = null, $jenis_bantuan = null, $kategori_pelaku_usaha = null, $limit = null, $start = 0)
     {
         $level = $this->session->userdata('level_user');
+        $params = [];
 
         // Filter Kabupaten
         $where_aksi = '';
@@ -241,9 +243,8 @@ class AspirasiModel extends CI_Model
             }
         }
 
-        // Filter Tahun (Fleksibel jika tahun diisi/tidak)
+        // Filter Tahun
         $tahun_where = '';
-        $params = [];
         if (! empty($tahun)) {
             $tahun_where = 'AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)';
             $params[] = $tahun;
@@ -269,29 +270,114 @@ class AspirasiModel extends CI_Model
             $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
         }
 
-        // / Filter Jenis Bantuan (0: Bantuan Modal, 1: Bantuan Gerobak, 2: Bantuan Gerobak Listrik)
+        // Filter Jenis Bantuan
         $bantuan_where = '';
         if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
             $bantuan_where = "AND a.jenis_bantuan = '$jenis_bantuan'";
         }
 
-        // Eksekusi Query
+        // Filter Kategori Pelaku Usaha (Biasa / Aspirasi)
+        $kategori_pu_where = '';
+        if ($kategori_pelaku_usaha !== null && $kategori_pelaku_usaha !== '') {
+            $kategori_pu_where = "AND a.kategori_pelaku_usaha = '$kategori_pelaku_usaha'";
+        }
+
+        // Tambahan Limit & Offset
+        $limit_query = '';
+        if ($limit !== null) {
+            $limit_query = 'LIMIT ? OFFSET ?';
+            $params[] = (int) $limit;
+            $params[] = (int) $start;
+        }
+
         $query = $this->db->query(
             "SELECT a.*,
                     (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) as kk3,
                     (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk LIMIT 1) as kk2
                 FROM pelaku_usaha as a 
-                WHERE a.kategori_pelaku_usaha = 1 
+                WHERE 1=1 
                 $tahun_where
                 $where_aksi 
                 $kategori_ada 
                 $bantuan_where
                 $penerimaWhere
                 $like_val
-                ", $params
+                $kategori_pu_where
+                ORDER BY a.id_pelaku_usaha DESC 
+                $limit_query
+                ",
+            $params
         );
 
         return $query;
+    }
+
+    // 2. Fungsi untuk COUNT Data (Paginasi)
+    public function countAspirasiByYears($kab, $nama, $get_kategori, $kab_usaha, $penerima, $tahun = null, $jenis_bantuan = null, $kategori_pelaku_usaha = null)
+    {
+        $level = $this->session->userdata('level_user');
+        $params = [];
+
+        $where_aksi = '';
+        if ($level == 1) {
+            if (! empty($kab_usaha)) {
+                $where_aksi = "AND a.kab_usaha = '$kab_usaha'";
+            }
+        } else {
+            if (! empty($kab)) {
+                $where_aksi = "AND a.kab_usaha = '$kab'";
+            }
+        }
+
+        $tahun_where = '';
+        if (! empty($tahun)) {
+            $tahun_where = 'AND (YEAR(a.tgl_input) = ? OR YEAR(a.tgl_edit) = ?)';
+            $params[] = $tahun;
+            $params[] = $tahun;
+        }
+
+        $penerimaWhere = '';
+        if ($penerima == 1) {
+            $penerimaWhere = 'AND (kk IN (SELECT kk FROM pelaku_usaha_penerima_2023 WHERE kk = a.kk) OR (SELECT kk FROM pelaku_usaha_19_06_2023_real WHERE kk = a.kk))';
+        }
+
+        $like_val = '';
+        if (! empty($nama)) {
+            $nama_clean = strtolower(trim($nama));
+            $like_val = "AND (LOWER(REPLACE(a.nama_lengkap,' ','')) LIKE '%$nama_clean%' OR a.no_urut LIKE '%$nama_clean%')";
+        }
+
+        $kategori_ada = '';
+        if (! empty($get_kategori)) {
+            $kategori_ada = "AND a.id_kategori_dumisake = '$get_kategori'";
+        }
+
+        $bantuan_where = '';
+        if ($jenis_bantuan !== null && $jenis_bantuan !== '') {
+            $bantuan_where = "AND a.jenis_bantuan = '$jenis_bantuan'";
+        }
+
+        $kategori_pu_where = '';
+        if ($kategori_pelaku_usaha !== null && $kategori_pelaku_usaha !== '') {
+            $kategori_pu_where = "AND a.kategori_pelaku_usaha = '$kategori_pelaku_usaha'";
+        }
+
+        $query = $this->db->query(
+            "SELECT COUNT(a.id_pelaku_usaha) as total_baris
+                FROM pelaku_usaha as a 
+                WHERE 1=1 
+                $tahun_where
+                $where_aksi 
+                $kategori_ada 
+                $bantuan_where
+                $penerimaWhere
+                $like_val
+                $kategori_pu_where
+                ",
+            $params
+        );
+
+        return $query->row()->total_baris;
     }
 
     public function getDataPelakUsaha($kab, $nama, $tahun, $jenis_bantuan = null)
@@ -337,7 +423,8 @@ class AspirasiModel extends CI_Model
             AND (a.aksi = '' OR a.aksi IS NULL)
             $bantuan_where
             $like_val 
-            ", [$tahun, $tahun]
+            ",
+            [$tahun, $tahun]
         );
 
         return $query;

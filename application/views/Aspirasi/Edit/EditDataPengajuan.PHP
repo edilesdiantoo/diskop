@@ -760,7 +760,7 @@
 
             event.preventDefault();
             $.ajax({
-                url: "<?= site_url() ?>VerifikasiController/SimpanCekDataEditPelakuUsaha",
+                url: "<?= site_url() ?>AspirasiController/SimpanDataEditPelakuUsaha",
                 method: "POST",
                 data: new FormData(this),
                 dataType: 'JSON',

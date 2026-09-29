@@ -1,30 +1,44 @@
-<head>
-</head>
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
-        <!-- <a href="<?= base_url(); ?>TambahUser" class="btn btn-outline-primary mr-4">Tambah Data</a> -->
-        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Tambah Data</button> -->
     </div>
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h4 class="card-title">Data aspirasi</h4>
+                        <h4 class="card-title">DATA ASPIRASI</h4>
                         <p class="card-description">
-                            Semua data aspirasi
+                            Semua Data Aspirasi
                         </p>
                     </div>
+
                     <?php
                     $level_user = $this->session->userdata('level_user');
-        $kab = $this->session->userdata('kab');
-        if ($level_user != 1) {
-            echo '<input type="hidden" id="kab_usaha" name="kab_usaha" value="'.$kab.'">';
-        }
+                    $kab = $this->session->userdata('kab');
+                    $uri = $this->uri->segment('1');
+                    $uri2 = $this->uri->segment('2');
+                    
+                    // Supaya rapi tersusun 4 kotak per baris
+                    $grid_class = "col-md-3 col-sm-6"; 
+                    ?>
 
-        ?>
-                    <!-- Tahun Penerima (Selalu Tampil) -->
-                    <div class="col-6">
+                    <?php if ($level_user != 1) : ?>
+                    <input type="hidden" id="kab_usaha" name="kab_usaha" value="<?= $kab ?>">
+                    <?php endif; ?>
+
+                    <!-- 1. Kategori Pelaku Usaha -->
+                    <div class="<?= $grid_class ?>">
+                        <div class="input-group mb-3">
+                            <select class="form-control level_satu" id="kategori_pelaku_usaha">
+                                <option value="">-Pelaku Usaha-</option>
+                                <option value="0">Biasa</option>
+                                <option value="1">Aspirasi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 2. Tahun Penerima -->
+                    <div class="<?= $grid_class ?>">
                         <div class="input-group mb-3">
                             <select class="form-control getTahunPenerima" id="tahun_penerima">
                                 <option value="">-Tahun Penerima-</option>
@@ -36,8 +50,8 @@
                         </div>
                     </div>
 
-                    <!-- Tambahan: Jenis Bantuan / Usaha (Selalu Tampil) -->
-                    <div class="col-6">
+                    <!-- 3. Jenis Bantuan -->
+                    <div class="<?= $grid_class ?>">
                         <div class="input-group mb-3">
                             <select class="form-control level_satu" id="jenis_bantuan">
                                 <option value="">-Semua Jenis Bantuan-</option>
@@ -48,68 +62,69 @@
                         </div>
                     </div>
 
-                    <?php if ($level_user == 1) { ?>
-                        <!-- Penerima Tahun Lalu -->
-                        <div class="col-3">
-                            <div class="input-group mb-3">
-                                <select class="form-control" id="penerima">
-                                    <option value="">-Penerima Tahun Lalu-</option>
-                                    <option value="1">Ya</option>
-                                </select>
-                            </div>
+                    <?php if ($level_user == 1 || $level_user == 3) : ?>
+                    <!-- 4. Pilih Kategori (Level 1 & 3) -->
+                    <div class="<?= $grid_class ?>">
+                        <div class="input-group mb-3">
+                            <select class="form-control level_satu" id="get_kategori">
+                                <option value="">-Pilih Kategori-</option>
+                                <?php
+                                    $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
+                                    foreach ($kategories_dumisake as $value) :
+                                    ?>
+                                <option value="<?= $value->id_kategori_dumisake ?>"><?= $value->nama ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
+                    </div>
+                    <?php endif; ?>
 
-                        <!-- Pilih Kabupaten -->
-                        <div class="col-3">
-                            <div class="input-group mb-3">
-                                <select class="form-control level_satu" id="kab_usaha">
-                                    <option value="">-Pilih Kab-</option>
-                                    <?php
-                        $getKab = $this->M_master->getKab(15)->result();
-                        foreach ($getKab as $value) {
-                            echo '<option value="'.$value->id.'">'.$value->name.'</option>';
-                        }
-                        ?>
-                                </select>
-                            </div>
+                    <?php if ($level_user == 1) : ?>
+                    <!-- 5. Penerima Tahun Lalu -->
+                    <div class="<?= $grid_class ?>">
+                        <div class="input-group mb-3">
+                            <select class="form-control" id="penerima">
+                                <option value="">-Penerima Tahun Lalu-</option>
+                                <option value="1">Ya</option>
+                            </select>
                         </div>
-                    <?php } ?>
+                    </div>
 
-                    <?php if ($level_user == 1 || $level_user == 3) { ?>
-                        <!-- Pilih Kategori -->
-                        <div class="col-3">
-                            <div class="input-group mb-3">
-                                <select class="form-control level_satu" id="get_kategori">
-                                    <option value="">-Pilih Kategori-</option>
-                                    <?php
-                        $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result();
-                        foreach ($kategories_dumisake as $value) {
-                            echo '<option value="'.$value->id_kategori_dumisake.'">'.$value->nama.'</option>';
-                        }
-                        ?>
-                                </select>
-                            </div>
+                    <!-- 6. Pilih Kabupaten -->
+                    <div class="<?= $grid_class ?>">
+                        <div class="input-group mb-3">
+                            <select class="form-control level_satu" id="kab_usaha">
+                                <option value="">-Pilih Kab-</option>
+                                <?php
+                                    $getKab = $this->M_master->getKab(15)->result();
+                                    foreach ($getKab as $value) :
+                                    ?>
+                                <option value="<?= $value->id ?>"><?= $value->name ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
+                    </div>
+                    <?php endif; ?>
 
-                        <!-- Input Search -->
-                        <div class="col-3">
-                            <div class="input-group mb-3">
-                                <input type="text" id="search" class="form-control search" placeholder="Cari Nama..." aria-label="search" aria-describedby="basic-addon1">
-                            </div>
+                    <!-- 7. Input Search -->
+                    <div class="<?= $grid_class ?>">
+                        <div class="input-group mb-3">
+                            <input type="text" id="search" class="form-control search" placeholder="Cari Nama..." aria-label="search" aria-describedby="basic-addon1">
                         </div>
-                    <?php } else { ?>
-                        <!-- Input Search untuk level lain -->
-                        <div class="col-3">
-                            <div class="input-group mb-3">
-                                <input type="text" id="search" class="form-control search" placeholder="Cari Nama..." aria-label="search" aria-describedby="basic-addon1">
-                            </div>
-                        </div>
-                    <?php } ?>
+                    </div>
+
+                    <!-- 8. Tombol Reset Filter -->
+                    <div class="<?= $grid_class ?>">
+                        <button type="button" id="btn-reset" class="btn btn-warning mb-3 w-100" style="color: black; font-weight: bold;">
+                            Reset Filter
+                        </button>
+                    </div>
                 </div>
+
                 <div class="row">
                     <div class="col-12" id="pelakuUsahaSearch">
                         <div class="table-responsive">
-                            <table id="" class="table">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -117,69 +132,52 @@
                                         <th>Rekomendasi</th>
                                         <th>Nama</th>
                                         <th>KK</th>
-                                        <!-- <th>Jenis Kelamin</th> -->
-                                        <!-- <th>Alamat Identitas</th> -->
                                         <th>No.Hp</th>
                                         <th>Nama Usaha</th>
-                                        <!-- <th>NIB/SKU/IUMK</th> -->
-                                        <!-- <th>Alamat Usaha</th> -->
-                                        <!-- <th>Sektor Usaha</th> -->
                                         <th>Jenis Usaha</th>
                                         <th>Titik Koordinat</th>
-                                        <!-- <th>Status</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="">
-                                    <?php $no = 1;
-
-        foreach ($getDataVerifikasiPelakuUsaha as $key) { ?>
-                                        <tr>
-                                            <td><?= ++$start; ?></td>
-                                            <td><?= $key->no_urut ?></td>
-                                            <td><?= $key->rekomendasi_dari ?></td>
-                                            <td><?= $key->nama_lengkap ?></td>
-                                            <td><?= $key->kk ?></td>
-                                            <td><?= $key->hp ?></td>
-                                            <td><?= $key->nama_usaha ?></td>
-                                            <td><?= $key->jenis_usaha ?></td>
-                                            <td>
-                                                <?php if ($key->titik_koordinat) {
-                                                    echo '<a href="https://maps.google.com/?q='.$key->titik_koordinat.'">Lokasi Map</a>';
-                                                } else {
-                                                    echo 'Tidak Ada';
-                                                }
-            ?>
-                                            </td>
-                                            
-
-                                            <td style="text-align: center;">
-
-                                                <?php
-            if ($key->aksi == 1 && $level_user == 1 || $level_user == 3) { ?>
-                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
-
-                                                    <?php } else {
-                                                        if ($key->kk2) {
-                                                            echo "<p style='color: red;'>Pernah Menerima Bantuan";
-                                                        } else { ?>
-
-                                                        <!-- <a type="button">Maintenence</a> -->
-                                                        <?php
-                                                            $uri = $this->uri->segment('1');
-                                                            $uri2 = $this->uri->segment('2');
-                                                            ?>
-                                                        <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
-                                                <?php }
-                                                        } ?>
-                                            </td>
-                                        </tr>
-                                    <?php } ?>
-
+                                <tbody>
+                                    <?php $no = 1; ?>
+                                    <!-- Variabel ini sudah disesuaikan dengan Controller -->
+                                    <?php foreach ($getDataVerifikasiPelakuUsaha as $key) : ?>
+                                    <tr>
+                                        <td><?= ++$start; ?></td>
+                                        <td><?= $key->no_urut ?></td>
+                                        <td><?= $key->rekomendasi_dari ?></td>
+                                        <td><?= $key->nama_lengkap ?></td>
+                                        <td><?= $key->kk ?></td>
+                                        <td><?= $key->hp ?></td>
+                                        <td><?= $key->nama_usaha ?></td>
+                                        <td><?= $key->jenis_usaha ?></td>
+                                        <td>
+                                            <?php if ($key->titik_koordinat) : ?>
+                                            <a href="https://maps.google.com/?q=<?= $key->titik_koordinat ?>">Lokasi Map</a>
+                                            <?php else : ?>
+                                            Tidak Ada
+                                            <?php endif; ?>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <?php if ($key->aksi == 1 && ($level_user == 1 || $level_user == 3)) : ?>
+                                            <a href="<?= base_url('AspirasiController/EditDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
+                                            <?php else : ?>
+                                            <?php if ($key->kk2) : ?>
+                                            <p style="color: red;">Pernah Menerima Bantuan</p>
+                                            <?php else : ?>
+                                            <!-- Deklarasi $uri ganda sudah dihapus dari sini -->
+                                            <a href="<?= base_url('AspirasiController/EditDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
+                                            <?php endif; ?>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                             <div class="card-footer pb-0">
-                                <?= $this->pagination->create_links(); ?>
+                                <!-- Jika pagination error saat baru load, pastikan library pagination di-load di Controller awal juga -->
+                                <?= isset($this->pagination) ? $this->pagination->create_links() : ''; ?>
                             </div>
                         </div>
                     </div>
@@ -197,7 +195,6 @@
                     <div class="card-body">
                         <h4 class="card-title">Catatan Penolakan</h4>
                         <div class="form-group">
-                            <!-- <label>Telah 1 (Satu) Tahun Dalam Pangkat Terakhir</label> -->
                             <div class="input-group col-xs-12">
                                 <textarea id='catatan' class="form-control" rows="4" name="catatan_penolakan_akhir"></textarea>
                             </div>
@@ -222,22 +219,22 @@
 
     function typingEffect() {
         let word = words[i].split("");
-        var loopTyping = function() {
+        var loopTyping = function () {
             if (word.length > 0) {
                 let elem = document.getElementById('search');
                 elem.setAttribute('placeholder', elem.getAttribute('placeholder') + word.shift());
             } else {
                 deletingEffect();
                 return false;
-            };
+            }
             timer = setTimeout(loopTyping, 100);
         };
         loopTyping();
-    };
+    }
 
     function deletingEffect() {
         let word = words[i].split("");
-        var loopDeleting = function() {
+        var loopDeleting = function () {
             if (word.length > 0) {
                 word.pop();
                 document.getElementById('search').setAttribute('placeholder', word.join(""));
@@ -246,110 +243,107 @@
                     i++;
                 } else {
                     i = 0;
-                };
+                }
                 typingEffect();
                 return false;
-            };
+            }
             timer = setTimeout(loopDeleting, 100);
         };
         loopDeleting();
-    };
+    }
 
     typingEffect();
 
-    $(document).ready(function() {
-        // 1. Filter Dropdown (Kategori, Kab, Penerima, Jenis Bantuan)
-        $('.level_satu').on('input change', function() {
-            console.log('years');
-            
-            const get_kategori   = $("#get_kategori").val();
-            const kab_usaha      = $("#kab_usaha").val();
-            const penerima       = $("#penerima").val();
-            const tahun_penerima = $("#tahun_penerima").val();
-            const jenis_bantuan  = $("#jenis_bantuan").val();
-            console.log(kab_usaha);
+    $(document).ready(function () {
 
-            if (tahun_penerima === "") {
-                alert("Tahun Penerima harus diinput");
-                return;
-            }
+        // 1. Tambahkan parameter 'start' di fungsi ini dengan nilai default 0
+        function fetchFilteredData(start = 0) {
+            const get_kategori = $("#get_kategori").val() || "";
+            const kab_usaha = $("#kab_usaha").val() || "";
+            const penerima = $("#penerima").val() || "";
+            const tahun_penerima = $("#tahun_penerima").val() || "";
+            const jenis_bantuan = $("#jenis_bantuan").val() || "";
+            const kategori_pelaku_usaha = $("#kategori_pelaku_usaha").val() || "";
 
-            var url = '<?= site_url() ?>AspirasiController/getAspirasiByYears';
+            const search = $("#search").val() || "";
+            const nama_search = search.replace(/ /g, "").toLowerCase();
 
             $.ajax({
-                url: url,
+                // 1. Tambahkan " /' + start " di belakang URL agar CodeIgniter tahu ini halaman ke berapa
+                url: "<?= site_url('AspirasiController/getAspirasiByYears/') ?>" + start,
                 type: 'POST',
                 data: {
                     penerima: penerima,
                     kab_usaha: kab_usaha,
-                    nama_search: $("#search").val(),
+                    nama_search: nama_search,
                     get_kategori: get_kategori,
                     tahun_penerima: tahun_penerima,
-                    jenis_bantuan: jenis_bantuan
+                    jenis_bantuan: jenis_bantuan,
+                    kategori_pelaku_usaha: kategori_pelaku_usaha
+                    // 2. Baris "start: start" bisa dihapus karena angkanya sudah dikirim lewat URL
                 },
-                success: function(data) {
+                success: function (data) {
                     $('#pelakuUsahaSearch').html(data);
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error: " + error);
                 }
             });
+        }
+
+        // 2. Cegat klik tombol Pagination agar menggunakan AJAX
+        // Kita pakai $(document).on karena tombol ini dirender oleh AJAX (elemen dinamis)
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault(); // Cegah browser pindah halaman
+
+            let href = $(this).attr('href');
+            let start = 0;
+
+            // Ekstrak angka offset dari URL (misal: .../getAspirasiByYears/10 -> ambil 10)
+            let segments = href.split('/');
+            let lastSegment = segments[segments.length - 1];
+
+            if (!isNaN(lastSegment) && lastSegment !== "") {
+                start = lastSegment;
+            }
+
+            // Panggil fungsi pencarian dengan offset halaman baru
+            fetchFilteredData(start);
         });
 
-        // 2. Filter Ganti Tahun
-        $('.getTahunPenerima').on('change', function() {
-            const tahun_penerima = $("#tahun_penerima").val();
+        // 3. Reset ke halaman 1 (start = 0) setiap kali filter diubah
+        $('.level_satu, .getTahunPenerima').on('change', function () {
+            fetchFilteredData(0);
+        });
 
+        $('.search').on('input', function () {
+            fetchFilteredData(0);
+        });
+
+        $('#jenis_bantuan').on('change', function () {
+            const jenis_bantuan = $(this).val();
             $.ajax({
-                url: '<?= site_url() ?>AspirasiController/searchPelakuUsahaLevelUserByYear',
+                url: '<?= site_url() ?>AspirasiController/getKategoriByJenis',
                 type: 'POST',
-                data: {
-                    tahun_penerima: tahun_penerima,
-                },
-                success: function(data) {
-                    $('#pelakuUsahaSearch').html(data);
-                    if ($("#get_kategori").length) $("#get_kategori")[0].selectedIndex = 0;
-                    if ($("#search").length) $("#search").val("");
-                    if ($("#kab_usaha").length && $("#kab_usaha").is("select")) $("#kab_usaha")[0].selectedIndex = 0;
-                    if ($("#penerima").length) $("#penerima")[0].selectedIndex = 0;
-                    if ($("#jenis_bantuan").length) $("#jenis_bantuan")[0].selectedIndex = 0;
+                data: { jenis_bantuan: jenis_bantuan },
+                success: function (data) {
+                    $('#get_kategori').html(data);
                 }
             });
         });
 
-        // 3. Filter Search Ketik Nama
-        $('.search').on('input', function() {
-            const search = $("#search").val();
-            const nama = search.replace(/ /g, "");
-            const nama_search = nama.toLowerCase();
+        $('#btn-reset').on('click', function () {
+            $('#tahun_penerima').val('');
+            $('#jenis_bantuan').val('');
+            $('#kategori_pelaku_usaha').val('');
+            $('#get_kategori').html('<option value="">-Pilih Kategori-</option>');
+            $('#search').val('');
 
-            const tahun_penerima = $("#tahun_penerima").val();
-            const kab_usaha      = $("#kab_usaha").val();
-            const jenis_bantuan  = $("#jenis_bantuan").val();
+            if ($('#penerima').length) $('#penerima').val('');
+            if ($('#kab_usaha').length) $('#kab_usaha').val('');
 
-            if (tahun_penerima === "") {
-                alert("Tahun Penerima harus diinput");
-                return;
-            }
-
-            if (kab_usaha === "") {
-                alert("Kabupaten Usaha harus diinput");
-                return;
-            }
-
-            $.ajax({
-                url: '<?= site_url() ?>AspirasiController/searchPelakuUsaha',
-                type: 'POST',
-                data: {
-                    nama_search: nama_search,
-                    tahun_penerima: tahun_penerima,
-                    kab_usaha: kab_usaha,
-                    jenis_bantuan: jenis_bantuan
-                },
-                success: function(data) {
-                    $('#pelakuUsahaSearch').html(data);
-                }
-            });
+            fetchFilteredData(0); // Reset juga me-load halaman pertama
         });
+
     });
 </script>
