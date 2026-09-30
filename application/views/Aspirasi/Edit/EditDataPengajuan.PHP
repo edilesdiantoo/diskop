@@ -795,13 +795,12 @@
 <script>
     $(document).ready(function () {
         $('#upload_form').on('submit', function (event) {
-            var uri1 = $("#uri1").val();
-            var uri2 = $("#uri2").val();
+            event.preventDefault(); // Taruh preventDefault di paling atas
+
             var id_pelaku_usaha = $("#id_pelaku_usaha").val();
 
-            event.preventDefault();
             $.ajax({
-                url: "<?= site_url() ?>AspirasiController/SimpanDataEditPelakuUsaha",
+                url: "<?= site_url('AspirasiController/SimpanDataEditPelakuUsaha') ?>",
                 method: "POST",
                 data: new FormData(this),
                 dataType: 'JSON',
@@ -809,7 +808,7 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-                    console.log(data);
+                    console.log("Success Response:", data);
                     Swal.fire({
                         title: 'CHECK DAN EDIT DATA PELAKU USAHA BERHASIL DI SIMPAN!!!',
                         text: "Silahkan dicek kembali kelengkapan data anda",
@@ -821,10 +820,16 @@
                             popup: 'animate__animated animate__fadeOutUp'
                         }
                     }).then(function () {
-                        window.location.href = "<?= site_url() ?>VerifikasiController/CekDataPelakuUsaha/" + id_pelaku_usaha;
+                        // window.location.href = "<?= site_url('VerifikasiController/CekDataPelakuUsaha/') ?>" + id_pelaku_usaha;
                     });
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error Status:", status);
+                    console.error("AJAX Error Details:", error);
+                    console.log("Server Response Text:", xhr.responseText); // Ini akan menampilkan pesan error asli dari PHP
+                    alert("Gagal memproses data. Cek console browser untuk detail error.");
                 }
-            })
+            });
         });
         $('.bd-example-modal-lg').on('show.bs.modal', function (e) {
             var isian = $(e.relatedTarget).data('aksi');

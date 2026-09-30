@@ -929,7 +929,13 @@ class AspirasiController extends CI_Controller
 
         ];
         $simpanCekDataPelakuUsaha = $this->M_verifikasiPelakuUsaha->simpanCekDataPelakuUsaha($this->input->post('id_pelaku_usaha'), $data);
-        echo json_encode($simpanCekDataPelakuUsaha);
-        // echo json_encode($data);
+        echo json_encode([
+            'status' => $simpanCekDataPelakuUsaha ? true : false,
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        exit;
+
+        // Hentikan script di sini agar HTML di bawahnya tidak ikut tercetak
     }
 }
