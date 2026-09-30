@@ -55,12 +55,12 @@
 
                 <td style="text-align: center;">
                     <?php if (($key->aksi == 1 && $level_user == 1) || $level_user == 3) : ?>
-                    <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
+                    <a href="<?= base_url('AspirasiController/EditDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
                     <?php else : ?>
                     <?php if ($key->kk2) : ?>
                     <p style='color: red; margin: 0;'>Pernah Menerima Bantuan</p>
                     <?php else : ?>
-                    <a href="<?= base_url('VerifikasiController/CekDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
+                    <a href="<?= base_url('AspirasiController/EditDataPelakuUsaha/'.$key->id_pelaku_usaha.'/'.$uri.'/'.$uri2) ?>" type="button" class="btn btn-outline-info btn-xs"> Edit</a>
                     <?php endif; ?>
                     <?php endif; ?>
                 </td>

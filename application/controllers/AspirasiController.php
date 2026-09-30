@@ -925,6 +925,7 @@ class AspirasiController extends CI_Controller
             'kategori_pelaku_usaha' => $this->input->post('kategori_pelaku_usaha'),
             'foto_usaha' => $foto_usaha,
             'aksi' => $this->input->post('aksi'),
+            'jenis_bantuan' => $this->input('jenis_bantuan'),
 
         ];
         $simpanCekDataPelakuUsaha = $this->M_verifikasiPelakuUsaha->simpanCekDataPelakuUsaha($this->input->post('id_pelaku_usaha'), $data);
