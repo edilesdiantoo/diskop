@@ -10,6 +10,7 @@
                 <th>No.Hp</th>
                 <th>Nama Usaha</th>
                 <th>Jenis Usaha</th>
+                <th>Jenis Bantuan</th> <!-- Kolom Baru -->
                 <th>Titik Koordinat</th>
                 <th>Action</th>
             </tr>
@@ -44,6 +45,18 @@
                 <td><?= $key->hp ?></td>
                 <td><?= $key->nama_usaha ?></td>
                 <td><?= $key->jenis_usaha ?></td>
+                <!-- Kolom Jenis Bantuan (0: Modal, 1: Gerobak, 2: Gerobak Listrik) -->
+                <td>
+                    <?php if ($key->jenis_bantuan == '0' || $key->jenis_bantuan === 0): ?>
+                    <span class="badge badge-success">Bantuan Modal</span>
+                    <?php elseif ($key->jenis_bantuan == '1' || $key->jenis_bantuan === 1): ?>
+                    <span class="badge badge-primary">Bantuan Gerobak</span>
+                    <?php elseif ($key->jenis_bantuan == '2' || $key->jenis_bantuan === 2): ?>
+                    <span class="badge badge-warning">Bantuan Gerobak Listrik</span>
+                    <?php else: ?>
+                    <span class="badge badge-secondary">-</span>
+                    <?php endif; ?>
+                </td>
 
                 <td>
                     <?php if ($key->titik_koordinat) : ?>

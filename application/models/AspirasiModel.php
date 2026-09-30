@@ -13,7 +13,7 @@ class AspirasiModel extends CI_Model
 
     public function getDataVerifikasiPelakuUsahaAdministrator($start, $limit)
     {
-        $query = $this->db->query("SELECT a.rekomendasi_dari, a.titik_koordinat, a.aksi_akhir, a.aksi, a.jk, a.id_pelaku_usaha, 
+        $query = $this->db->query("SELECT a.jenis_bantuan, a.rekomendasi_dari, a.titik_koordinat, a.aksi_akhir, a.aksi, a.jk, a.id_pelaku_usaha, 
         a.alamat_usaha, a.jenis_usaha, a.nama_usaha, a.nib_sku_iumk, a.hp, 
         a.kk, a.nik, a.id_kategori_dumisake, a.tgl_lahir, a.nama_lengkap, 
         a.alamat, a.kab_usaha, a.kec_usaha, a.no_urut, b.nama, 
