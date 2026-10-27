@@ -829,6 +829,7 @@ class AspirasiController extends CI_Controller
     public function getKategoriByJenis()
     {
         $jenis = $this->input->post('jenis_bantuan');
+        $selected_kategori = $this->input->post('selected_kategori'); // <-- Tangkap ID kategori bawaan (jika ada)
 
         // Wajib: Hanya ambil kategori yang berstatus aktif (1)
         $this->db->where('aktive', 1);
@@ -842,7 +843,10 @@ class AspirasiController extends CI_Controller
 
         $html = '<option value="">-Pilih Kategori-</option>';
         foreach ($kategori as $row) {
-            $html .= '<option value="'.$row->id_kategori_dumisake.'">'.$row->nama.'</option>';
+            // Tambahkan logika untuk menandai opsi yang 'selected'
+            $selected = ($row->id_kategori_dumisake == $selected_kategori) ? 'selected' : '';
+
+            $html .= '<option value="'.$row->id_kategori_dumisake.'" '.$selected.'>'.$row->nama.'</option>';
         }
 
         echo $html;
@@ -869,17 +873,18 @@ class AspirasiController extends CI_Controller
 
     public function SimpanDataEditPelakuUsaha()
     {
-        if ($_FILES['foto_usaha']['name']) {
+        // 1. Perbaikan pengecekan file foto_usaha (mencegah error Undefined index & null offset)
+        if (isset($_FILES['foto_usaha']['name']) && $_FILES['foto_usaha']['name'] != '') {
             if ($this->input->post('foto_usaha_old')) {
-                unlink('uploads/fotoUsaha/'.$this->input->post('foto_usaha_old'));
-                $curtime = time();
-                $foto_usaha = 'foto_usaha'.$curtime.str_replace(' ', '', $_FILES['foto_usaha']['name']);
-                $this->fotoUsahaMethod($foto_usaha, 'foto_usaha');
-            } else {
-                $curtime = time();
-                $foto_usaha = 'foto_usaha'.$curtime.str_replace(' ', '', $_FILES['foto_usaha']['name']);
-                $this->fotoUsahaMethod($foto_usaha, 'foto_usaha');
+                $old_path = 'uploads/fotoUsaha/'.$this->input->post('foto_usaha_old');
+                if (file_exists($old_path)) {
+                    unlink($old_path);
+                }
             }
+
+            $curtime = time();
+            $foto_usaha = 'foto_usaha'.$curtime.str_replace(' ', '', $_FILES['foto_usaha']['name']);
+            $this->fotoUsahaMethod($foto_usaha, 'foto_usaha');
         } else {
             $foto_usaha = $this->input->post('foto_usaha_old');
         }
@@ -910,32 +915,30 @@ class AspirasiController extends CI_Controller
             'jenis_usaha' => $this->input->post('jenis_usaha'),
             'pendapatan_perbulan' => $this->input->post('pendapatan_perbulan'),
             'alamat_usaha' => $this->input->post('alamat_usaha'),
-            // 'file_ktp'                     => $file_ktp,
             'bersedia_bertanggung_jawab_1' => $this->input->post('bersedia_bertanggung_jawab_1'),
-            // 'file_kk'                      => $file_kk,
             'bersedia_bertanggung_jawab_2' => $this->input->post('bersedia_bertanggung_jawab_2'),
-            // 'file_sertifikat_umkm'         => $file_sertifikat_umkm,
             'tidak_komisi_jasa' => $this->input->post('tidak_komisi_jasa'),
             'titik_koordinat' => $this->input->post('titik_koordinat'),
             'catatan_penolakan' => $this->input->post('catatan_penolakan'),
             'session_edit' => $this->session->userdata('id_pegawai'),
             'tgl_edit' => date('Y-m-d'),
+            'tgl_input' => date('Y-m-d'),
             'session_aksi' => $this->session->userdata('id_pegawai'),
             'rekomendasi_dari' => $this->input->post('rekomendasi_dari'),
             'kategori_pelaku_usaha' => $this->input->post('kategori_pelaku_usaha'),
             'foto_usaha' => $foto_usaha,
             'aksi' => $this->input->post('aksi'),
-            'jenis_bantuan' => $this->input('jenis_bantuan'),
-
+            // 2. Perbaikan penulisan $this->input->post
+            'jenis_bantuan' => $this->input->post('jenis_bantuan'),
         ];
+
         $simpanCekDataPelakuUsaha = $this->M_verifikasiPelakuUsaha->simpanCekDataPelakuUsaha($this->input->post('id_pelaku_usaha'), $data);
+
         echo json_encode([
             'status' => $simpanCekDataPelakuUsaha ? true : false,
             'message' => 'Data berhasil disimpan',
         ]);
 
         exit;
-
-        // Hentikan script di sini agar HTML di bawahnya tidak ikut tercetak
     }
 }

@@ -54,12 +54,16 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="get_kategori">Kategori Usaha</label>
+
+                                <!-- TAMBAHKAN INPUT HIDDEN INI -->
+                                <input type="hidden" id="kategori_bawaan" value="<?= $cekDataVerifikasiPelakuUsaha->id_kategori_dumisake; ?>">
+
                                 <select class="form-select" id="get_kategori" name="id_kategori_dumisake" onchange="kategoriUsaha()">
                                     <option value="">-Pilih Kategori-</option>
                                     <?php 
-                                    $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result(); 
-                                    foreach ($kategories_dumisake as $value) : 
-                    ?>
+                                        $kategories_dumisake = $this->M_transaksi->kategories_dumisake()->result(); 
+                                        foreach ($kategories_dumisake as $value) : 
+                                        ?>
                                     <option value="<?= $value->id_kategori_dumisake ?>" <?= ($cekDataVerifikasiPelakuUsaha->id_kategori_dumisake == $value->id_kategori_dumisake) ? 'selected' : '' ?>>
                                         <?= $value->nama ?>
                                     </option>
@@ -69,13 +73,14 @@
                         </div>
 
                         <script>
-                            // Panggilan otomatis saat halaman pertama dimuat (bawaan Anda)
+                            // Ambil nilai dari input hidden
+                            const kategori_lama = $('#kategori_bawaan').val();
+
                             kategoriUsaha();
 
                             function kategoriUsaha() {
                                 const id_kategori_dumisake = $("#get_kategori").val();
 
-                                // Cek jika ID tidak kosong sebelum melakukan AJAX
                                 if (id_kategori_dumisake) {
                                     $.ajax({
                                         type: "post",
@@ -93,26 +98,37 @@
                                 }
                             }
 
-                            // [TAMBAHAN BARU] Dependent Dropdown: Ubah isi Kategori saat Jenis Bantuan diganti
                             $(document).ready(function () {
                                 $('#jenis_bantuan').on('change', function () {
                                     const jenis_bantuan = $(this).val();
 
-                                    // Kosongkan result kategori di bawahnya karena kategorinya akan di-refresh
                                     $("#resultKategori").html("");
 
-                                    $.ajax({
-                                        // Menggunakan fungsi yang sama seperti di halaman filter pencarian
-                                        url: "<?= site_url('AspirasiController/getKategoriByJenis') ?>",
-                                        type: 'POST',
-                                        data: { jenis_bantuan: jenis_bantuan },
-                                        success: function (data) {
-                                            $('#get_kategori').html(data);
-                                        }
-                                    });
+                                    if (jenis_bantuan !== '') {
+                                        $.ajax({
+                                            url: "<?= site_url('AspirasiController/getKategoriByJenis') ?>",
+                                            type: 'POST',
+                                            data: {
+                                                jenis_bantuan: jenis_bantuan,
+                                                selected_kategori: kategori_lama // Kirim ke controller
+                                            },
+                                            success: function (data) {
+                                                $('#get_kategori').html(data);
+                                                kategoriUsaha();
+                                            }
+                                        });
+                                    } else {
+                                        $('#get_kategori').html('<option value="">-Pilih Kategori-</option>');
+                                    }
                                 });
+
+                                // Trigger otomatis saat halaman dimuat
+                                if ($('#jenis_bantuan').val() !== '') {
+                                    $('#jenis_bantuan').trigger('change');
+                                }
                             });
                         </script>
+
                         <div class="form-group">
                             <div class="card">
                                 <div class="card-body">
